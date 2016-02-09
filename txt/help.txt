@@ -9,7 +9,7 @@
       <p>Upload input structure in PDB format. Make sure the chain identifier is provided.
 	 The sequence of residues in the structure does not have to completely match the one 
          provided in the sequence field; missing residues (eg, flexible loops) in the structure
-         are tolerated, and will be filled in usign Modeller. Please remove/edit non-natural 
+         are tolerated, and will be filled in using Modeller. Please remove/edit non-natural 
          amino acids, as they may crash your job.
       </p></li>
   <li><a id="chain"><h5>Chain ID</h5></a>
@@ -19,7 +19,7 @@
   <li><a id="sequence"><h5>Protein Sequence</h5></a>
       <p>Required. Enter the sequence of the protein chain in plain text or FASTA format.
          The sequence can contain regions that are missing in the input PDB file. For multiple chain inputs,
-        please use FASTA format with header lines only containing a single chain ID
+        please use FASTA format with header lines only containing a single chain ID.
 at a time. 
       </p></li>
 </ul>
@@ -29,7 +29,7 @@ at a time.
   <li><b>cryptosite.pol.pred.pdb</b>: Output PDB file with CryptoSite scores in the B-factor column.
 	                             We recommend using a score threshold of 10 (a residue with a larger score is
                                      more likely to be part of a cryptic site).</li>
-  <li><b>cryptosite.pol.pred</b>: Output file in simple text format listing residues, residue IDs, chain IDs, and the CryptiSite score (last column; the number in PDB file divided by 100).</li>
+  <li><b>cryptosite.pol.pred</b>: Output file in simple text format listing residues, residue IDs, chain IDs, and the CryptoSite score (last column; the number in PDB file divided by 100).</li>
   <li><b>cryptosite.chimerax</b>: UCSF Chimera session file that is preset to visualize you protein, with residues colored
                                   based on the CryptoSite score. A pop-up window will also appear when launching Chimera,
                                   showing feature values for all the selected residues.</li>
