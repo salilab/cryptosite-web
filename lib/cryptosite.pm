@@ -46,7 +46,7 @@ sub get_footer {
     return <<FOOTER;
 <div id="address">
 <center><a href="http://www.sciencedirect.com/science/article/pii/S0022283616000851">
-<b>P. Cimermancic, P. Weinkam, et al., <i>JMB</i>, 2016</b></a>
+<b>P. Cimermancic et al., <i>JMB</i>, 2016</b></a>
 </center>
 </div>
 FOOTER
@@ -78,33 +78,34 @@ GREETING
 
            $q->table(
 
-               $q->Tr($q->td({-colspan=>2}, $greeting)) .
+               $q->Tr($q->td({-colspan=>3}, $greeting)) .
 
                $q->Tr($q->td("Email address (required)",
                       $self->help_link("email"), $q->br),
                       $q->td($q->textfield({-name=>"email",
                                             -value=>$self->email,
-                                            -size=>"25"}))) .
+                                            -size=>"25"}))) .  
 
-               $q->Tr($q->td($q->h3("Upload PDB coordinate file (required)",
+
+               $q->Tr($q->td($q->h3("PDB ID",
                       $self->help_link("input_pdb"), $q->br),
-                      $q->td($q->filefield({-name=>"input_pdb"})))) .
+                      $q->td([$q->textfield({-name=>'input_pdbid', 
+                                                                -maxlength => 8, -size => 8,
+                                                                -placeholder=>"eg. 2f6v"})]),
+                      $q->td([$q->h3('or') . ' upload file: ' . $q->filefield({-name=>'input_pdb', 
+                                                                               -size => 10})]))) .
 
-                $q->Tr($q->td("Chain ID (required)",
+
+
+               $q->Tr($q->td("Chain ID",
                       $self->help_link("chain"), $q->br),
                       $q->td($q->textfield({-name=>"chain",
                                             -placeholder=>"A or A,B,C",
-                                            -size=>"25"}))) .
-
-                $q->Tr($q->td($q->h3("Enter protein sequence (required)",
-                                    $self->help_link("sequence"))),
-                      $q->td($q->textarea({-name=>"sequence",
-                                           -placeholder=>"Please enter sequence(s) in FASTA format with ONE-CHARACTER headers matching Chain ID(s) only. For example: >A or >B",
-                                           -rows=>"10", -cols=>"40"}))) .
+                                            -size=>"8"}))) .
 
                $q->Tr($q->td("Name your job",
                       $q->td($q->textfield({-name=>"name",
-                                            -placeholder=>"1ABC", -size=>"9"})))) .
+                                            -placeholder=>"2f6vA", -size=>"8"})))) .
 
                $q->Tr($q->td({-colspan=>"2"}, "<center>" .
                       $q->input({-type=>"submit", -value=>"Process"}) .
@@ -118,42 +119,50 @@ GREETING
 sub get_submit_page {
     my $self = shift;
     my $q = $self->cgi;
-    my $userInput;
 
-    my $user_pdb_name = $q->upload('input_pdb');    $userInput->{"input_pdb"} = $user_pdb_name;
-    my $user_name     = $q->param('name')||"";      $userInput->{"name"} = $user_name;
-    my $email         = $q->param('email')||"";     $userInput->{"email"} = $email;
-    my $sequence      = $q->param('sequence')||"";  $userInput->{"sequence"} = $sequence;
-    my $chain         = $q->param('chain')||"";     $userInput->{"chain"} = $chain;
+    my $user_pdbid    = lc $q->param('input_pdbid')||""; 
+    my $user_name     = $q->param('name')||"";       
+    my $email         = $q->param('email')||"";      
+    my $chain         = $q->param('chain')||"";      
 
     check_email($email);
-    check_pdb_name($user_pdb_name);
+    #check_pdb_name($user_pdbid);
     check_chain($chain);
-    #check_sequence($sequence);
 
     my $job = $self->make_job($user_name);
     my $jobdir = $job->directory;
 
+    my $pdbFileName = "";
 
-    ### write pdb input
-    my $pdb_input = $jobdir . "/input.pdb";
-    open(INPDB, "> $pdb_input")
-       or throw saliweb::frontend::InternalError("Cannot open $pdb_input: $!");
-    my $file_contents = "";
-    while (<$user_pdb_name>) {
-        $file_contents .= $_;
-    }
-    print INPDB $file_contents;
-    close INPDB
-       or throw saliweb::frontend::InternalError("Cannot close $pdb_input: $!");
+    if(length $user_pdbid > 0) {
+        $pdbFileName = get_pdb_chains($self, $user_pdbid, $jobdir);
+                               }
+    else {
+        my $user_pdb_file = $q->upload('input_pdb');   
+        
+        my ($user_pdb_file) = @_;
+        if (!$user_pdb_file) {
+             throw saliweb::frontend::InputValidationError(
+                       "No coordinate file has been submitted!");
+          }
 
-    ### write sequence
-    my $seq_file = $jobdir . "/input.seq";
-    open(INSEQ, "> $seq_file")
-       or throw saliweb::frontend::InternalError("Cannot open $seq_file: $!");
-    print INSEQ $sequence;
-    close INSEQ
-       or throw saliweb::frontend::InternalError("Cannot close $seq_file: $!");
+        my $filesize = -s "$jobdir/$user_pdb_file";
+        if($filesize == 0) {
+           throw saliweb::frontend::InputValidationError("You have uploaded an empty file.");
+                           }
+
+        ### write pdb input
+        my $pdb_input = $jobdir . "/input.pdb";
+        open(INPDB, "> $pdb_input")
+          or throw saliweb::frontend::InternalError("Cannot open $pdb_input: $!");
+        my $file_contents = "";
+        while (<$user_pdb_file>) {
+            $file_contents .= $_;
+        }
+        print INPDB $file_contents;
+        close INPDB
+           or throw saliweb::frontend::InternalError("Cannot close $pdb_input: $!");
+         }
 
 
     ### write parameters
@@ -241,6 +250,67 @@ sub display_failed_job {
                     "further assistance.");
     return $return;
 }
+
+
+
+
+
+
+
+
+sub get_pdb_chains {
+  my $self = shift;
+  my $pdb_code = shift;
+  my $jobdir = shift;
+
+  my $pdb_file_name = "pdb" . $pdb_code . ".ent";
+  my $full_path_pdb_file_name = saliweb::frontend::get_pdb_code($pdb_code, $jobdir);
+  return $pdb_file_name;
+  
+        my $pdb_input = $jobdir . "/input_cps.pdb";
+        open(INPDB, "> $pdb_input")
+          or throw saliweb::frontend::InternalError("Cannot open $pdb_input: $!");
+        my $file_contents = "";
+        while (<$pdb_file_name>) {
+            $file_contents .= $_;
+        }
+        print INPDB $file_contents;
+        close INPDB
+           or throw saliweb::frontend::InternalError("Cannot close $pdb_input: $!");
+         }
+ 
+
+
+
+
+
+sub get_pdb_code {
+  my ($code, $outdir) = @_;
+    my $pdb_root = "/netapp/database/pdb/remediated/pdb/";
+    if ($code =~ m/^([A-Za-z0-9]+)$/) {
+      $code = $1;
+    } else {
+      throw saliweb::frontend::InputValidationError(
+                 "You have entered an invalid PDB code $code; valid codes " .
+                 "contain only letters and numbers, e.g. 1abc...");
+    }
+
+    my $in_pdb = $pdb_root . substr($code, 1, 2) . "/pdb" . $code . ".ent.gz";
+    my $out_pdb = "$outdir/pdb${code}.ent";
+
+    if (! -e $in_pdb) {
+      throw saliweb::frontend::InputValidationError(
+                 "PDB code '$code' does not exist in our copy of the " .
+                 "PDB database.");
+    } else {
+        system("gunzip -c $in_pdb > $out_pdb") == 0 or
+          throw saliweb::frontend::InternalError(
+                                 "gunzip of $in_pdb to $out_pdb failed: $?");
+        return $out_pdb;
+    }
+}
+
+
 
 sub check_email{
     my ($email) = @_;
