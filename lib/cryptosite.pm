@@ -61,13 +61,12 @@ sub get_index_page {
     my $greeting = <<GREETING;
 <p>CryptoSite is a computational tool for predicting the location of cryptic binding sites in proteins and protein complexes.<br></br>
 
-   Many proteins have small molecule-binding pockets that are not easily detectable in the ligand-free structures. These cryptic sites require a conformational change to become apparent; a cryptic site can therefore be defined as a site that forms a pocket in a holo structure, but not in the apo structure. Because many proteins appear to lack druggable pockets, understanding and accurately identifying cryptic sites could expand the set of drug targets. We find that cryptic sites tend to be as conserved in evolution as traditional binding pockets, but are less hydrophobic and more flexible. CryptoSite predicts cryptic sites more accurately (for our benchmark, the true positive and false positive rates are 73% and 29%, respectively), and faster than other available approaches (a calculation on an average sized protein takes 1-2 days).<br></br>
+<font size="5" color="red">Due to the high demand, we temporarily
+stopped accepting new jobs. We are working hard to optimize the speed of
+the CryptoSite webserver, and will be ready for new runs by March 1st.
+We apologize for the inconvenience. Thank you!</font>
 
-   The use of CryptoSite is limited to a single job submission per user per day. If you require more access, 
-   please <a href= . $contact . >contact us</a>.<br></br>
-   <b>Caveat Emptor!</b> CryptoSite is freely avaialable in the hope that it will be useful, but you must use
-   it at your own risk. We make no guarantees about data confidentiality on this public service website. If 
-   you require secure access, please <a href= . $contact . >contact us</a>.
+
 <br />&nbsp;</p>
 GREETING
 
@@ -117,81 +116,10 @@ GREETING
 }
 
 sub get_submit_page {
-    my $self = shift;
-    my $q = $self->cgi;
-    my $userInput;
-
-    my $user_pdb_name = $q->upload('input_pdb');    $userInput->{"input_pdb"} = $user_pdb_name;
-    my $user_name     = $q->param('name')||"";      $userInput->{"name"} = $user_name;
-    my $email         = $q->param('email')||"";     $userInput->{"email"} = $email;
-    my $sequence      = $q->param('sequence')||"";  $userInput->{"sequence"} = $sequence;
-    my $chain         = $q->param('chain')||"";     $userInput->{"chain"} = $chain;
-
-    check_email($email);
-    check_pdb_name($user_pdb_name);
-    check_chain($chain);
-    #check_sequence($sequence);
-
-    my $job = $self->make_job($user_name);
-    my $jobdir = $job->directory;
 
 
-    ### write pdb input
-    my $pdb_input = $jobdir . "/input.pdb";
-    open(INPDB, "> $pdb_input")
-       or throw saliweb::frontend::InternalError("Cannot open $pdb_input: $!");
-    my $file_contents = "";
-    while (<$user_pdb_name>) {
-        $file_contents .= $_;
-    }
-    print INPDB $file_contents;
-    close INPDB
-       or throw saliweb::frontend::InternalError("Cannot close $pdb_input: $!");
-
-    ### write sequence
-    my $seq_file = $jobdir . "/input.seq";
-    open(INSEQ, "> $seq_file")
-       or throw saliweb::frontend::InternalError("Cannot open $seq_file: $!");
-    print INSEQ $sequence;
-    close INSEQ
-       or throw saliweb::frontend::InternalError("Cannot close $seq_file: $!");
 
 
-    ### write parameters
-    my $input_param = $jobdir . "/param.txt";
-    open(INPARAM, "> $input_param")
-       or throw saliweb::frontend::InternalError("Cannot open $input_param: $!");
-    print INPARAM "$user_name\n";
-    print INPARAM "$email\n";
-    print INPARAM "$chain\n";
-    close INPARAM
-       or throw saliweb::frontend::InternalError("Cannot close $input_param: $!");
-
-    $job->submit($email);
-
-    my $return=
-      $q->h1("Job Submitted") .
-      $q->hr .
-      $q->p("Your job has been submitted to the server! " .
-            "Your job ID is " . $job->name . ".") .
-      $q->p("Results will be found at <a href=\"" .
-            $job->results_url . "\">this link</a>.");
-    if ($email) {
-        $return.=$q->p("You will be notified at $email when job results " .
-                       "are available.");
-    }
-    $return .=
-      $q->p("You can check on your job at the " .
-            "<a href=\"" . $self->queue_url .
-            "\">CryptoSite queue status page</a>.").
-      $q->p("The estimated execution time is ~1-2 days, depending on the load.").
-      $q->p("If you experience a problem or you do not receive the results " .
-            "for more than 5 days, please <a href=\"" .
-            $self->contact_url . "\">contact us</a>.") .
-      $q->p("Thank you for using our server and good luck in your research!").
-      $q->p("Peter Cimermancic");
-
-    return $return;
 
 }
 
