@@ -45,8 +45,8 @@ sub get_footer {
     my $htmlroot = $self->htmlroot;
     return <<FOOTER;
 <div id="address">
-<center><a href="https://www.dropbox.com/s/zyu6k53fekpkzub/CryptoSite_manuscript.pdf?dl=0">
-<b>P. Cimermancic, P. Weinkam, et al., <i>(submitted)</i></b></a>
+<center><a href="http://www.sciencedirect.com/science/article/pii/S0022283616000851">
+<b>P. Cimermancic, P. Weinkam, et al., <i>JMB</i>, 2016</b></a>
 </center>
 </div>
 FOOTER
@@ -59,11 +59,10 @@ sub get_index_page {
     my $contact = $self->contact_url;
 
     my $greeting = <<GREETING;
-<p>CryptoSite is a computational tool for predicting the location of cryptic binding sites in proteins and protein complexes.<br></br>
+<p>CryptoSite is a computational tool for predicting the location of cryptic binding sites in proteins and protein complexes. Please read our <a href="http://www.sciencedirect.com/science/article/pii/S0022283616000851">
+<b>paper</b></a> for more info.<br></br>
 
-   Many proteins have small molecule-binding pockets that are not easily detectable in the ligand-free structures. These cryptic sites require a conformational change to become apparent; a cryptic site can therefore be defined as a site that forms a pocket in a holo structure, but not in the apo structure. Because many proteins appear to lack druggable pockets, understanding and accurately identifying cryptic sites could expand the set of drug targets. We find that cryptic sites tend to be as conserved in evolution as traditional binding pockets, but are less hydrophobic and more flexible. CryptoSite predicts cryptic sites more accurately (for our benchmark, the true positive and false positive rates are 73% and 29%, respectively), and faster than other available approaches (a calculation on an average sized protein takes 1-2 days).<br></br>
-
-   The use of CryptoSite is limited to a single job submission per user per day. If you require more access, 
+   The use of CryptoSite is limited to a chain of a PDB file per user per day. If you require more access or if you want to run CryptoSite in a multi-chain mode, 
    please <a href= . $contact . >contact us</a>.<br></br>
    <b>Caveat Emptor!</b> CryptoSite is freely avaialable in the hope that it will be useful, but you must use
    it at your own risk. We make no guarantees about data confidentiality on this public service website. If 
