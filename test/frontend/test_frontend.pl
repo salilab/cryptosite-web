@@ -2,7 +2,7 @@ use saliweb::Test;
 use Test::More 'no_plan';
 
 BEGIN {
-    use_ok('modfoo');
+    use_ok('cryptosite');
 }
 
 my $t = new saliweb::Test('cryptosite');
