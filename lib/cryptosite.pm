@@ -140,16 +140,11 @@ sub get_submit_page {
     else {
         my $user_pdb_file = $q->upload('input_pdb');   
         
-        my ($user_pdb_file) = @_;
         if (!$user_pdb_file) {
              throw saliweb::frontend::InputValidationError(
                        "No coordinate file has been submitted!");
           }
 
-        my $filesize = -s "$jobdir/$user_pdb_file";
-        if($filesize == 0) {
-           throw saliweb::frontend::InputValidationError("You have uploaded an empty file.");
-                           }
 
         ### write pdb input
         my $pdb_input = $jobdir . "/input.pdb";
@@ -162,6 +157,12 @@ sub get_submit_page {
         print INPDB $file_contents;
         close INPDB
            or throw saliweb::frontend::InternalError("Cannot close $pdb_input: $!");
+
+        my $filesize = -s $jobdir . "/input.pdb";
+        if($filesize == 0) {
+           throw saliweb::frontend::InputValidationError("You have uploaded an empty file.");
+                           }
+
          }
 
 
@@ -266,17 +267,6 @@ sub get_pdb_chains {
   my $pdb_file_name = "pdb" . $pdb_code . ".ent";
   my $full_path_pdb_file_name = saliweb::frontend::get_pdb_code($pdb_code, $jobdir);
   return $pdb_file_name;
-  
-        my $pdb_input = $jobdir . "/input_cps.pdb";
-        open(INPDB, "> $pdb_input")
-          or throw saliweb::frontend::InternalError("Cannot open $pdb_input: $!");
-        my $file_contents = "";
-        while (<$pdb_file_name>) {
-            $file_contents .= $_;
-        }
-        print INPDB $file_contents;
-        close INPDB
-           or throw saliweb::frontend::InternalError("Cannot close $pdb_input: $!");
          }
  
 
