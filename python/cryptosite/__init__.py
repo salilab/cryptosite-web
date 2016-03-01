@@ -132,7 +132,7 @@ date
 """ % (rfil,)
             
                 r = self.runnercls(script)
-		r.set_sge_options('-l arch=lx24-amd64 -l scratch=2G -l mem_free=6G -t 1-50')
+		r.set_sge_options('-l arch=lx24-amd64 -l scratch=2G -l mem_free=6G -t 1-25')
 		#r.set_sge_options('-l arch=lx24-amd64 -l scratch=2G -l mem_free=6G -t 1-10')
 
                 self.logger.info("Calculated pockets for AllosMod results")
@@ -222,8 +222,8 @@ echo "working on"
 
 module load modeller
 
-##/diva1/home/modeller/modpy.sh python mainer.py 
-python mainer.py %s
+##/diva1/home/modeller/modpy.sh python mainer_short.py 
+python mainer_short.py %s
 
 module unload modeller
 

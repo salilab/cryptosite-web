@@ -91,8 +91,9 @@ GREETING
                       $self->help_link("input_pdb"), $q->br),
                       $q->td([$q->textfield({-name=>'input_pdbid', 
                                                                 -maxlength => 8, -size => 8,
-                                                                -placeholder=>"eg. 2f6v"})]),
-                      $q->td([$q->h3('or') . ' upload file: ' . $q->filefield({-name=>'input_pdb', 
+                                                                -placeholder=>"eg. 2f6v"}) . 
+
+                                  $q->h3('or') . ' upload file: ' . $q->filefield({-name=>'input_pdb',
                                                                                -size => 10})]))) .
 
 
@@ -100,7 +101,7 @@ GREETING
                $q->Tr($q->td("Chain ID",
                       $self->help_link("chain"), $q->br),
                       $q->td($q->textfield({-name=>"chain",
-                                            -placeholder=>"A or A,B,C",
+                                            -placeholder=>"eg. A",
                                             -size=>"8"}))) .
 
                $q->Tr($q->td("Name your job",

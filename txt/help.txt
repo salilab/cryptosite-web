@@ -6,21 +6,12 @@
       <p>Required, a notification and results will be sent to this address once the job is completed.
       </p></li>
   <li><a id="input_pdb"><h5>Coordinate file</h5></a>
-      <p>Upload input structure in PDB format. Make sure the chain identifier is provided.
-	 The sequence of residues in the structure does not have to completely match the one 
-         provided in the sequence field; missing residues (eg, flexible loops) in the structure
-         are tolerated, and will be filled in using Modeller. Please remove/edit non-natural 
-         amino acids, as they may crash your job.
+      <p>Provide PDB ID or upload input structure in the PDB format. Missing residues (eg, flexible loops)
+         in the structure are NOT tolerated. For the best performance, please fill in the missing residues (for example, with Modeller). Please remove/edit non-natural amino acids, as they may crash your job.
       </p></li>
   <li><a id="chain"><h5>Chain ID</h5></a>
       <p>Required. CryptoSite can now use multiple chains as an input - please enter IDs of all the chains that you want to 
          analyze, separated by commas (for example, A,B,C).
-      </p></li>
-  <li><a id="sequence"><h5>Protein Sequence</h5></a>
-      <p>Required. Enter the sequence of the protein chain in plain text or FASTA format.
-         The sequence can contain regions that are missing in the input PDB file. For multiple chain inputs,
-        please use FASTA format with header lines only containing a single chain ID.
-at a time. 
       </p></li>
 </ul>
 
