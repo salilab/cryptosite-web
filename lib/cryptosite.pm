@@ -63,10 +63,10 @@ sub get_index_page {
 <b>paper</b></a> for more info.<br></br>
 
    The use of CryptoSite is limited to a chain of a PDB file per user per day. If you require more access or if you want to run CryptoSite in a multi-chain mode, 
-   please <a href= . $contact . >contact us</a>.<br></br>
+   please <a href="$contact">contact us</a>.<br></br>
    <b>Caveat Emptor!</b> CryptoSite is freely avaialable in the hope that it will be useful, but you must use
    it at your own risk. We make no guarantees about data confidentiality on this public service website. If 
-   you require secure access, please <a href= . $contact . >contact us</a>.
+   you require secure access, please <a href="$contact">contact us</a>.
 <br />&nbsp;</p>
 GREETING
 
@@ -87,14 +87,14 @@ GREETING
                                             -size=>"25"}))) .  
 
 
-               $q->Tr($q->td($q->h3("PDB ID",
+               $q->Tr($q->td($q->h3("PDB ID"),
                       $self->help_link("input_pdb"), $q->br),
                       $q->td([$q->textfield({-name=>'input_pdbid', 
                                                                 -maxlength => 8, -size => 8,
                                                                 -placeholder=>"eg. 2f6v"}) . 
 
                                   $q->h3('or') . ' upload file: ' . $q->filefield({-name=>'input_pdb',
-                                                                               -size => 10})]))) .
+                                                                               -size => 10})])) .
 
 
 
@@ -104,9 +104,9 @@ GREETING
                                             -placeholder=>"eg. A",
                                             -size=>"8"}))) .
 
-               $q->Tr($q->td("Name your job",
+               $q->Tr($q->td("Name your job"),
                       $q->td($q->textfield({-name=>"name",
-                                            -placeholder=>"2f6vA", -size=>"8"})))) .
+                                            -placeholder=>"2f6vA", -size=>"8"}))) .
 
                $q->Tr($q->td({-colspan=>"2"}, "<center>" .
                       $q->input({-type=>"submit", -value=>"Process"}) .
