@@ -11,7 +11,7 @@ my $t = new saliweb::Test('cryptosite');
 
 # Check job submission
 
-# Check get_submit_page with PDB ID
+# Check get_submit_page with uploaded PDB
 {
     my $self = $t->make_frontend();
     my $cgi = $self->cgi;
@@ -19,14 +19,33 @@ my $t = new saliweb::Test('cryptosite');
     my $tmpdir = File::Temp::tempdir(CLEANUP=>1);
     ok(chdir($tmpdir), "chdir into tempdir");
     ok(mkdir("incoming"), "mkdir incoming");
+
+    $cgi->param('email', 'test@example.com');
+    $cgi->param('chain', 'A');
+
+    throws_ok { $self->get_submit_page() }
+              saliweb::frontend::InputValidationError,
+              'submit_page, no uploaded PDB';
+    like($@, qr/No coordinate file has been submitted/,
+         'submit_page, no uploaded PDB, error message');
+
+    ok(open(FH, "> test.pdb"), "Open test.pdb");
+    ok(close(FH), "Close test.pdb");
+    open(FH, "test.pdb");
+    $cgi->param('input_pdb', \*FH);
+
+    throws_ok { $self->get_submit_page() }
+              saliweb::frontend::InputValidationError,
+              'submit_page, empty uploaded PDB';
+    like($@, qr/You have uploaded an empty file/,
+         'submit_page, empty uploaded PDB, error message');
+
     ok(open(FH, "> test.pdb"), "Open test.pdb");
     print FH "REMARK\nATOM      2  CA  ALA     1      26.711  14.576   5.091\n";
     ok(close(FH), "Close test.pdb");
     open(FH, "test.pdb");
 
     $cgi->param('input_pdb', \*FH);
-    $cgi->param('email', 'test@example.com');
-    $cgi->param('chain', 'A');
     my $ret = $self->get_submit_page();
     like($ret, qr/Job Submitted.*You can check on your job/ms,
          "submit page HTML");
