@@ -1,5 +1,5 @@
 package cryptosite;
-use base qw(saliweb::frontend);
+use saliweb::frontend;
 use strict;
 
 our @ISA = "saliweb::frontend";
@@ -126,7 +126,7 @@ sub get_submit_page {
     my $email         = $q->param('email')||"";      
     my $chain         = $q->param('chain')||"";      
 
-    check_email($email);
+    check_required_email($email);
     #check_pdb_name($user_pdbid);
     check_chain($chain);
 
@@ -298,16 +298,6 @@ sub get_pdb_code {
           throw saliweb::frontend::InternalError(
                                  "gunzip of $in_pdb to $out_pdb failed: $?");
         return $out_pdb;
-    }
-}
-
-
-
-sub check_email{
-    my ($email) = @_;
-    if ($email eq "") {
-        throw saliweb::frontend::InputValidationError(
-                       "No email provided!");
     }
 }
 
