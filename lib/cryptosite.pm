@@ -270,37 +270,6 @@ sub get_pdb_chains {
   return $pdb_file_name;
          }
  
-
-
-
-
-
-sub get_pdb_code {
-  my ($code, $outdir) = @_;
-    my $pdb_root = "/netapp/database/pdb/remediated/pdb/";
-    if ($code =~ m/^([A-Za-z0-9]+)$/) {
-      $code = $1;
-    } else {
-      throw saliweb::frontend::InputValidationError(
-                 "You have entered an invalid PDB code $code; valid codes " .
-                 "contain only letters and numbers, e.g. 1abc...");
-    }
-
-    my $in_pdb = $pdb_root . substr($code, 1, 2) . "/pdb" . $code . ".ent.gz";
-    my $out_pdb = "$outdir/pdb${code}.ent";
-
-    if (! -e $in_pdb) {
-      throw saliweb::frontend::InputValidationError(
-                 "PDB code '$code' does not exist in our copy of the " .
-                 "PDB database.");
-    } else {
-        system("gunzip -c $in_pdb > $out_pdb") == 0 or
-          throw saliweb::frontend::InternalError(
-                                 "gunzip of $in_pdb to $out_pdb failed: $?");
-        return $out_pdb;
-    }
-}
-
 # Check if a PDB name was specified
 sub check_pdb_name {
     my ($pdb_name) = @_;
