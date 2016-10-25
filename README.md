@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/salilab/cryptosite.svg?branch=master)](https://travis-ci.org/salilab/cryptosite)
-[![codecov](https://codecov.io/gh/salilab/cryptosite/branch/master/graph/badge.svg)](https://codecov.io/gh/salilab/cryptosite)
+[![Build Status](https://travis-ci.org/salilab/cryptosite-web.svg?branch=master)](https://travis-ci.org/salilab/cryptosite-web)
+[![codecov](https://codecov.io/gh/salilab/cryptosite-web/branch/master/graph/badge.svg)](https://codecov.io/gh/salilab/cryptosite-web)
 
 This is the source code for [CryptoSite](https://salilab.org/cryptosite/), a web
 service for predicting the location of cryptic binding sites in proteins and
