@@ -7,7 +7,7 @@ import string, re
 
 class Job(saliweb.backend.Job):
 
-    runnercls = saliweb.backend.SaliSGERunner
+    runnercls = saliweb.backend.SGERunner
 
     def run(self):
 
@@ -132,7 +132,7 @@ date
 """ % (rfil,)
             
                 r = self.runnercls(script)
-		r.set_sge_options('-l arch=lx24-amd64 -l scratch=2G -l mem_free=6G -t 1-25')
+		r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=6G -t 1-25')
 		#r.set_sge_options('-l arch=lx24-amd64 -l scratch=2G -l mem_free=6G -t 1-10')
 
                 self.logger.info("Calculated pockets for AllosMod results")
@@ -168,7 +168,7 @@ python PREDICTER.py %s
 date""" % ('XXX','XXX','XXX')
 
                 r = self.runnercls(script)
-                r.set_sge_options('-l arch=lx24-amd64 -l scratch=2G -l mem_free=2G')
+                r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=2G')
 
                 self.logger.info("Prediction DONE!")
 
@@ -237,7 +237,7 @@ date
 """ % ('XXX'+chainid, rfil, rfil)
         
             r = self.runnercls(script)
-            r.set_sge_options('-l arch=lx24-amd64 -l diva1=1G -l scratch=2G -l mem_free=2G')
+            r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
 
 	    self.logger.info("Calculated bioinformatics features for job: %s" % rfil)
             self.logger.info("\n\nSubmitting to AllosMod")
