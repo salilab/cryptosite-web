@@ -1,5 +1,6 @@
 use saliweb::Test;
 use Test::More 'no_plan';
+use Test::Exception;
 use File::Temp;
 
 BEGIN {
@@ -32,4 +33,38 @@ my $t = new saliweb::Test('cryptosite');
 
 
     chdir('/') # Allow the temporary directory to be deleted
+}
+
+# Test check_pdb_name
+{
+    throws_ok { cryptosite::check_pdb_name("") }
+              saliweb::frontend::InputValidationError,
+              "check_pdb_name (bad name)";
+    like($@, qr/No coordinate file has been submitted!/,
+         "check_pdb_name (bad name, error message)");
+
+    cryptosite::check_pdb_name("ok.pdb");
+}
+
+# Test check_chain
+{
+    throws_ok { cryptosite::check_chain("x") }
+              saliweb::frontend::InputValidationError,
+              "check_chain (bad name)";
+    like($@, qr/Wrong Chain ID input!/,
+         "check_chain (bad name, error message)");
+
+    cryptosite::check_chain("A");
+    cryptosite::check_chain("A,B");
+}
+
+# Test check_sequence
+{
+    throws_ok { cryptosite::check_sequence("x") }
+              saliweb::frontend::InputValidationError,
+              "check_sequence (bad name)";
+    like($@, qr/Wrong Protein Sequence input!/,
+         "check_sequence (bad name, error message)");
+
+    cryptosite::check_sequence(">A\nCGV");
 }
