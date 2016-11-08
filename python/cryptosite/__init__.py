@@ -79,7 +79,6 @@ cp /netapp/sali/peterc/cryptosite/src_multichain/soap_clean.py .
 
 
 /diva1/home/modeller/modpy.sh python soap_clean.py $SGE_TASK_ID
-##python soap_clean.py $SGE_TASK_ID
 
 cat SnapList.txt
 
@@ -102,7 +101,6 @@ sleep 20
 
 ## - AM features
 /diva1/home/modeller/modpy.sh python AM_BMI.py 
-##python AM_BMI.py $file $SGE_TASK_ID
 
 
 cp am_features.out /scrapp/AM/$TT/$DROUT
@@ -133,8 +131,6 @@ date
             
                 r = self.runnercls(script)
 		r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=6G -t 1-25')
-		#r.set_sge_options('-l arch=lx24-amd64 -l scratch=2G -l mem_free=6G -t 1-10')
-
                 self.logger.info("Calculated pockets for AllosMod results")
 
                 out = open('stage.out','w')
@@ -150,21 +146,11 @@ date
 
                 ### - setup the SGE script #1
                 script = """
-##export CURDIR=`pwd`
-##export TMPDIR="/scratch/peterc/$JOB_ID/$SGE_TAKS_ID"
-##mkdir -p $TMPDIR
-
-##cp %s.pdb %s.features $TMPDIR
-##cd $TMPDIR
-##cp /netapp/sali/peterc/cryptosite/src_v1/PREDICTER.py /netapp/sali/peterc/cryptosite/src_v1/PolyS*.pkl .
-
 module load sali-libraries
 export PYTHONPATH="/netapp/sali/peterc/lib64/python"
 
 python PREDICTER.py %s
 
-##cp *.pol.pred *.pol.pred.pdb $CURDIR
-##rm -rf $TMPDIR
 date""" % ('XXX','XXX','XXX')
 
                 r = self.runnercls(script)
@@ -192,28 +178,14 @@ date""" % ('XXX','XXX','XXX')
             outran.write(rfil)
             outran.close()
 
-
-            ### - read in the chain and sequence
-            #paramsFile = open('param.txt','r')
-            #jobName, email, chainid = [i.strip() for i in paramsFile.readlines()]
-            #paramsFile.close()
-
             ### - setup the SGE script #1
             script = """
-
-##export TMPDIR="/scratch/peterc/$JOB_ID"
-##mkdir -p $TMPDIR
 ls -lt
-##cp input.pdb input.seq param.txt $TMPDIR
 
-##cd $TMPDIR
 pwd
 
-##cp -r /netapp/sali/peterc/cryptosite/src_v1 $TMPDIR
 cp -r /netapp/sali/peterc/cryptosite/src_multichain/* .
 
-##cd ${TMPDIR}/src
-##cp ../input.pdb ../input.seq ../param.txt .
 pwd
 ls -lt
 
@@ -222,15 +194,11 @@ echo "working on"
 
 module load modeller
 
-##/diva1/home/modeller/modpy.sh python mainer_short.py 
 python mainer_short.py %s
 
 module unload modeller
 
 echo "pre-AllosMod" > stage.out
-
-##mkdir -p /scrapp/cryptosite/%s
-##cp -r * /scrapp/cryptosite/%s
 
 date
 
@@ -265,8 +233,6 @@ date
         elif stage=="AllosMod": self.reschedule_run() 
         elif stage=="AllosMod-bmi":
 
-            #if stage=="pre-AllosMod": 
-
             ### - gather the AM data
             self.logger.info("Gathering AllosMod results")
             os.system('python /netapp/sali/peterc/cryptosite/src_multichain/gatherer.py %s %s' % (rfil,chainid))
@@ -281,11 +247,6 @@ date
         elif stage=="DONE":
             ### - make chimera session file
             self.logger.info("Completing the job: writing a Chimera session file.")
-            #paramsFile = open('param.txt','r')
-            #jobName, email, chainid = [i.strip() for i in paramsFile.readlines()]
-            #jobName = jobName.replace(' ','_')
-            #paramsFile.close()
-
             os.system('cp XXX.pol.pred cryptosite.pol.pred')
             os.system('cp XXX.pol.pred.pdb cryptosite.pol.pred.pdb')
             
@@ -307,7 +268,7 @@ date
 open_files("%s", "%s")
 ]]>
 </py_cmd>
-</ChimeraPuppet>""" % (pdburl,ftrurl)# jobName, jobName)
+</ChimeraPuppet>""" % (pdburl,ftrurl)
 
             out = open('cryptosite.chimerax', 'w')
             out.write(chimeraSession)
@@ -325,4 +286,3 @@ def get_web_service(config_file):
     db = saliweb.backend.Database(Job)
     config = saliweb.backend.Config(config_file)
     return saliweb.backend.WebService(config, db)
-
