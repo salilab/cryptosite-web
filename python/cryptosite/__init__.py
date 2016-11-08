@@ -202,7 +202,7 @@ echo "pre-AllosMod" > stage.out
 
 date
 
-""" % ('XXX'+chainid, rfil, rfil)
+""" % ('XXX'+chainid)
         
             r = self.runnercls(script)
             r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
