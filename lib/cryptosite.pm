@@ -64,7 +64,7 @@ sub get_index_page {
 
    The use of CryptoSite is limited to a chain of a PDB file per user per day. If you require more access or if you want to run CryptoSite in a multi-chain mode, 
    please <a href="$contact">contact us</a>.<br></br>
-   <b>Caveat Emptor!</b> CryptoSite is freely avaialable in the hope that it will be useful, but you must use
+   <b>Caveat Emptor!</b> CryptoSite is freely available in the hope that it will be useful, but you must use
    it at your own risk. We make no guarantees about data confidentiality on this public service website. If 
    you require secure access, please <a href="$contact">contact us</a>.
 <br />&nbsp;</p>
