@@ -96,7 +96,7 @@ sleep 20
 
 
 ## - AM features
-/diva1/home/modeller/modpy.sh python AM_BMI.py 
+cryptosite am_bmi
 
 
 cp am_features.out /scrapp/AM/$TT/$DROUT
