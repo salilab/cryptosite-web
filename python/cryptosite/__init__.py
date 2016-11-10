@@ -84,7 +84,7 @@ cat SnapList.txt
 sleep 20
 
 ## - pockets
-cryptosite pocket_parser $SGE_TASK_ID
+cryptosite pockets
 
 
 mkdir -p /scrapp/AM/$TT/$DROUT
