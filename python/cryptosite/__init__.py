@@ -2,7 +2,7 @@ import saliweb.backend
 import logging, os
 from random import randint,choice
 import string, re
-
+import subprocess
 
 
 class Job(saliweb.backend.Job):
@@ -223,7 +223,7 @@ date
 
             ### - gather the AM data
             self.logger.info("Gathering AllosMod results")
-            os.system('python /netapp/sali/peterc/cryptosite/src_multichain/gatherer.py %s %s' % (rfil,chainid))
+            subprocess.check_call("module load cryptosite && cryptosite gatherer /scrapp/AM/%s %s" % (rfil,chainid))
 
             ### - run SVM
             ## TO DELETE
