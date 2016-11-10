@@ -67,7 +67,7 @@ echo $DRT
 echo $PDB
 
 
-
+module load cryptosite
 cp -r /netapp/sali/peterc/cryptosite/src_multichain/analysis/for_peter/* .
 cp $DRIN/pm.pdb.B*.pdb $DRIN/$PDB_mdl.pdb .
 
@@ -75,10 +75,8 @@ wc *.pdb
 
 cp /netapp/sali/peterc/cryptosite/src_multichain/AM_BMI.py .
 cp /netapp/sali/peterc/cryptosite/src_multichain/CHASA.py .
-cp /netapp/sali/peterc/cryptosite/src_multichain/soap_clean.py .
 
-
-/diva1/home/modeller/modpy.sh python soap_clean.py $SGE_TASK_ID
+cryptosite soap_clean $SGE_TASK_ID
 
 cat SnapList.txt
 
@@ -86,9 +84,7 @@ cat SnapList.txt
 sleep 20
 
 ## - pockets
-cp /netapp/sali/peterc/cryptosite/src_multichain/pocket_parser.py .
-
-python pocket_parser.py $SGE_TASK_ID
+cryptosite pocket_parser $SGE_TASK_ID
 
 
 mkdir -p /scrapp/AM/$TT/$DROUT
