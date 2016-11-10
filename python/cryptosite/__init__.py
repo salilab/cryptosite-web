@@ -184,19 +184,11 @@ ls -lt
 
 pwd
 
-cp -r /netapp/sali/peterc/cryptosite/src_multichain/* .
-
-pwd
-ls -lt
-
-export LD_LIBRARY_PATH="/netapp/sali/peterc/Undrugabble/Software/concavity_distr/bin/x86_64"
 echo "working on"
 
-module load modeller
+module load cryptosite
 
-python mainer_short.py %s
-
-module unload modeller
+cryptosite mainer_short %s
 
 echo "pre-AllosMod" > stage.out
 
