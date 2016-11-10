@@ -76,7 +76,7 @@ wc *.pdb
 cp /netapp/sali/peterc/cryptosite/src_multichain/AM_BMI.py .
 cp /netapp/sali/peterc/cryptosite/src_multichain/CHASA.py .
 
-cryptosite soap_clean $SGE_TASK_ID
+cryptosite soap
 
 cat SnapList.txt
 
