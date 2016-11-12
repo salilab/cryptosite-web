@@ -184,7 +184,7 @@ echo "working on"
 
 module load cryptosite
 
-cryptosite mainer_short %s
+cryptosite setup --short %s
 
 echo "pre-AllosMod" > stage.out
 
