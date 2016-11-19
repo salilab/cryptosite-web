@@ -186,6 +186,9 @@ module load cryptosite
 
 cryptosite setup --short %s
 
+# Put AllosMod outputs on /scrapp
+echo "SCRAPP=True" >> XXX/input.dat
+
 echo "pre-AllosMod" > stage.out
 
 date
