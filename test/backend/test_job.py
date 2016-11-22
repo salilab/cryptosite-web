@@ -11,7 +11,7 @@ class JobTests(saliweb.test.TestCase):
         """Test successful run method, first step"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')
         fname = os.path.join(j.directory, 'param.txt')
-        open(fname, 'w').write('testjob\ntest@example.com\nA\n')
+        open(fname, 'w').write('testpdb\nA\n')
         cls = j._run_in_job_directory(j.run)
         self.assert_(isinstance(cls, saliweb.backend.SGERunner),
                      "SGERunner not returned")
