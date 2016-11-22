@@ -133,10 +133,10 @@ sub get_submit_page {
     my $job = $self->make_job($user_name);
     my $jobdir = $job->directory;
 
-    my $pdbFileName = "";
+    my $pdb_input = "";
 
     if(length $user_pdbid > 0) {
-        $pdbFileName = get_pdb_chains($self, $user_pdbid, $jobdir);
+        $pdb_input = get_pdb_chains($self, $user_pdbid, $jobdir);
                                }
     else {
         my $user_pdb_file = $q->upload('input_pdb');   
@@ -148,7 +148,7 @@ sub get_submit_page {
 
 
         ### write pdb input
-        my $pdb_input = $jobdir . "/input.pdb";
+        $pdb_input = $jobdir . "/input.pdb";
         open(INPDB, "> $pdb_input")
           or throw saliweb::frontend::InternalError("Cannot open $pdb_input: $!");
         my $file_contents = "";
@@ -171,8 +171,7 @@ sub get_submit_page {
     my $input_param = $jobdir . "/param.txt";
     open(INPARAM, "> $input_param")
        or throw saliweb::frontend::InternalError("Cannot open $input_param: $!");
-    print INPARAM "$user_name\n";
-    print INPARAM "$email\n";
+    print INPARAM "$pdb_input\n";
     print INPARAM "$chain\n";
     close INPARAM
        or throw saliweb::frontend::InternalError("Cannot close $input_param: $!");

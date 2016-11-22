@@ -11,11 +11,6 @@ class Job(saliweb.backend.Job):
 
     def run(self):
 
-        ### - read in the chain and sequence
-        paramsFile = open('param.txt','r')
-        jobName, email, chainid = [i.strip() for i in paramsFile.readlines()]
-        paramsFile.close()
-
         if 'stage.out' in os.listdir('.'): 
             data = open('stage.out')
             D = data.readlines()
@@ -166,6 +161,8 @@ date""" % ('XXX','XXX','XXX')
             self.logger.setLevel(logging.INFO)
             self.logger.info("Beginning preprocess() for job %s " %self.name)
 
+            with open('param.txt') as params_file:
+                pdb_file, chainid = [i.strip() for i in params_file.readlines()]
 
             ### - set random number
             rint = randint(100,999)
@@ -184,7 +181,7 @@ echo "working on"
 
 module load cryptosite
 
-cryptosite setup --short %s
+cryptosite setup --short %s %s
 
 # Put AllosMod outputs on /scrapp
 echo "SCRAPP=True" >> XXX/input.dat
@@ -193,7 +190,7 @@ echo "pre-AllosMod" > stage.out
 
 date
 
-""" % ('XXX'+chainid)
+""" % (pdb_file, chainid)
         
             r = self.runnercls(script)
             r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
@@ -213,11 +210,6 @@ date
         outran= open('random.out')
         rfil = outran.read().strip()
         outran.close()
-
-        paramsFile = open('param.txt','r')
-        jobName, email, chainid = [i.strip() for i in paramsFile.readlines()]
-        jobName = jobName.replace(' ','_')
-        paramsFile.close()
 
 
         if stage=="pre-AllosMod": self.reschedule_run()
