@@ -211,7 +211,7 @@ echo "pre-AllosMod" > stage.out
 date
 
 """ % (pdb_file, chainid)
-        
+
         r = self.runnercls(script)
         r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
 
@@ -245,7 +245,7 @@ date
         self.logger.info("Completing the job: writing a Chimera session file.")
         shutil.copy('XXX.pol.pred', 'cryptosite.pol.pred')
         shutil.copy('XXX.pol.pred.pdb', 'cryptosite.pol.pred.pdb')
-            
+
         with open('script.chimerax') as data:
             chimeraSession = data.read()
 
