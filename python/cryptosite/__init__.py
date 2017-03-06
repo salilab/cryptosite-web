@@ -11,7 +11,7 @@ class Job(saliweb.backend.Job):
 
     def preprocess(self):
         # Clean up from any previous runs (e.g. a failed run being resubmitted)
-        for f in ("state.out", "random.out"):
+        for f in ("stage.out", "random.out"):
             if os.path.exists(f):
                 os.unlink(f)
 
