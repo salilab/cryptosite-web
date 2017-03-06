@@ -15,6 +15,7 @@ sub get_navigation_links {
         $q->a({-href=>$self->index_url}, "CryptoSite Home"),
         $q->a({-href=>$self->queue_url}, "Current Queue"),
         $q->a({-href=>$self->help_url}, "Help"),
+        $q->a({-href=>$self->download_url}, "Download"),
         $q->a({-href=>$self->contact_url}, "Contact")
         ];
 }
@@ -56,17 +57,19 @@ FOOTER
 sub get_index_page {
     my $self = shift;
     my $q = $self->cgi;
-    my $contact = $self->contact_url;
+    my $download = $self->download_url;
 
     my $greeting = <<GREETING;
 <p>CryptoSite is a computational tool for predicting the location of cryptic binding sites in proteins and protein complexes. Please read our <a href="http://www.sciencedirect.com/science/article/pii/S0022283616000851">
 <b>paper</b></a> for more info.<br></br>
 
    The use of CryptoSite is limited to a chain of a PDB file per user per day. If you require more access or if you want to run CryptoSite in a multi-chain mode, 
-   please <a href="$contact">contact us</a>.<br></br>
+   you can <a href="$download">download the source code</a> and run the
+   algorithm on your own compute cluster.<br></br>
    <b>Caveat Emptor!</b> CryptoSite is freely available in the hope that it will be useful, but you must use
-   it at your own risk. We make no guarantees about data confidentiality on this public service website. If 
-   you require secure access, please <a href="$contact">contact us</a>.
+   it at your own risk. We make no guarantees about data confidentiality on this public service website.
+   If you need to work with confidential data, you can
+   <a href="$download">run CryptoSite on your own machine.</a>.
 <br />&nbsp;</p>
 GREETING
 
@@ -203,6 +206,21 @@ sub get_submit_page {
 
     return $return;
 
+}
+
+sub get_download_page {
+    return <<TEXT;
+<h2>Running CryptoSite locally</h2>
+
+<p>If you want to run CryptoSite with larger systems, or with confidential
+data, or you want more control over each step in the algorithm, you can
+<a href="https://github.com/salilab/cryptosite/">download the source code
+from GitHub</a> and run it on your own compute cluster.</p>
+
+<p>The source code for this web service is also
+<a href="https://github.com/salilab/cryptosite-web/">available at GitHub</a>.
+</p>
+TEXT
 }
 
 sub get_results_page {

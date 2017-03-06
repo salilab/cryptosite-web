@@ -39,3 +39,11 @@ my $t = new saliweb::Test('cryptosite');
     like($txt, qr/CryptoSite is a computational tool/ms,
          'get_index_page');
 }
+
+# Test get_download_page
+{
+    my $self = $t->make_frontend();
+    my $txt = $self->get_download_page();
+    like($txt, qr/Running CryptoSite locally/ms,
+         'get_download_page');
+}
