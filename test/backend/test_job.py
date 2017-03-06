@@ -48,5 +48,20 @@ class JobTests(saliweb.test.TestCase):
         self.assert_(isinstance(cls, saliweb.backend.SGERunner),
                      "SGERunner not returned")
 
+    def test_run_allosmod(self):
+        """Test processing of AllosMod output"""
+        j = self.make_test_job(cryptosite.Job, 'RUNNING')
+        j._run_in_job_directory(j._set_random)
+        cls = j._run_in_job_directory(j.run_allosmod)
+        self.assert_(isinstance(cls, saliweb.backend.SGERunner),
+                     "SGERunner not returned")
+
+    def test_run_allosmod_bmi(self):
+        """Test run of final prediction"""
+        j = self.make_test_job(cryptosite.Job, 'RUNNING')
+        cls = j._run_in_job_directory(j.run_allosmod_bmi)
+        self.assert_(isinstance(cls, saliweb.backend.SGERunner),
+                     "SGERunner not returned")
+
 if __name__ == '__main__':
     unittest.main()
