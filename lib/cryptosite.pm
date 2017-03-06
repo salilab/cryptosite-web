@@ -80,7 +80,7 @@ GREETING
 
                $q->Tr($q->td({-colspan=>3}, $greeting)) .
 
-               $q->Tr($q->td("Email address (required)",
+               $q->Tr($q->td("Email address (optional)",
                       $self->help_link("email"), $q->br),
                       $q->td($q->textfield({-name=>"email",
                                             -value=>$self->email,
@@ -126,7 +126,7 @@ sub get_submit_page {
     my $email         = $q->param('email')||"";      
     my $chain         = $q->param('chain')||"";      
 
-    check_required_email($email);
+    check_optional_email($email);
     #check_pdb_name($user_pdbid);
     check_chain($chain);
 
