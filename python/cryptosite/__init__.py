@@ -97,13 +97,9 @@ echo $PDB
 
 
 module load cryptosite
-cp -r /netapp/sali/peterc/cryptosite/src_multichain/analysis/for_peter/* .
 cp $DRIN/pm.pdb.B*.pdb $DRIN/$PDB_mdl.pdb .
 
 wc *.pdb
-
-cp /netapp/sali/peterc/cryptosite/src_multichain/AM_BMI.py .
-cp /netapp/sali/peterc/cryptosite/src_multichain/CHASA.py .
 
 cryptosite soap
 
