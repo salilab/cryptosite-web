@@ -33,9 +33,10 @@ class JobTests(saliweb.test.TestCase):
     def test_preprocess(self):
         """Test preprocess"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')
-        for fname in ('stage.out', 'other.out'):
+        for fname in ('stage.out', 'other.out', 'XXX_mdl.pdb', 'sge-script.sh'):
             with open(os.path.join(j.directory, fname), 'w') as fh:
                 fh.write("dummy")
+        os.mkdir(os.path.join(j.directory, 'XXX'))
         j._run_in_job_directory(j.preprocess)
         self.assertEqual(os.listdir(j.directory), ['other.out'])
 

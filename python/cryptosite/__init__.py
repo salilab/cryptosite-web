@@ -1,5 +1,6 @@
 import saliweb.backend
 import logging, os
+import glob
 import shutil
 from random import randint,choice
 import string, re
@@ -36,6 +37,11 @@ class Job(saliweb.backend.Job):
     def preprocess(self):
         # Clean up from any previous runs (e.g. a failed run being resubmitted)
         Stage.write(None)
+        for f in glob.glob("sge-script*") + glob.glob("XXX*"):
+            if os.path.isdir(f):
+                shutil.rmtree(f, ignore_errors=True)
+            else:
+                os.unlink(f)
 
     def _set_random(self):
         """Determine and return a random file name"""
