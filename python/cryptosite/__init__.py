@@ -246,9 +246,8 @@ date
         shutil.copy('XXX.pol.pred', 'cryptosite.pol.pred')
         shutil.copy('XXX.pol.pred.pdb', 'cryptosite.pol.pred.pdb')
             
-        data = open('script.chimerax')
-        chimeraSession = data.read()
-        data.close()
+        with open('script.chimerax') as data:
+            chimeraSession = data.read()
 
         (filepath, jobdir) = os.path.split(self.url)
         pdb_temp = "/cryptosite.pol.pred.pdb?"
@@ -266,9 +265,9 @@ open_files("%s", "%s")
 </py_cmd>
 </ChimeraPuppet>""" % (pdburl,ftrurl)
 
-        out = open('cryptosite.chimerax', 'w')
-        out.write(chimeraSession)
-        out.close()
+        with open('cryptosite.chimerax', 'w') as out:
+            out.write(chimeraSession)
+
         self.logger.info("Job completed! Results available at: %s" % urlAddress)
         subprocess.check_call(['zip', 'chimera.zip', 'cryptosite.chimerax'])
 
