@@ -63,7 +63,7 @@ sub get_index_page {
 <p>CryptoSite is a computational tool for predicting the location of cryptic binding sites in proteins and protein complexes. Please read our <a href="http://www.sciencedirect.com/science/article/pii/S0022283616000851">
 <b>paper</b></a> for more info.<br></br>
 
-   The use of CryptoSite is limited to a chain of a PDB file per user per day. If you require more access or if you want to run CryptoSite in a multi-chain mode, 
+   The use of CryptoSite is limited to a PDB file per user per day. If you require more access,
    you can <a href="$download">download the source code</a> and run the
    algorithm on your own compute cluster.<br></br>
    <b>Caveat Emptor!</b> CryptoSite is freely available in the hope that it will be useful, but you must use
@@ -104,7 +104,7 @@ GREETING
                $q->Tr($q->td("Chain ID",
                       $self->help_link("chain"), $q->br),
                       $q->td($q->textfield({-name=>"chain",
-                                            -placeholder=>"eg. A",
+                                            -placeholder=>"eg. A or A,B",
                                             -size=>"8"}))) .
 
                $q->Tr($q->td("Name your job"),
