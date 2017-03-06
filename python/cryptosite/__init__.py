@@ -1,5 +1,6 @@
 import saliweb.backend
 import logging, os
+import shutil
 from random import randint,choice
 import string, re
 import subprocess
@@ -242,8 +243,8 @@ date
     def postprocess_final(self):
         ### - make chimera session file
         self.logger.info("Completing the job: writing a Chimera session file.")
-        os.system('cp XXX.pol.pred cryptosite.pol.pred')
-        os.system('cp XXX.pol.pred.pdb cryptosite.pol.pred.pdb')
+        shutil.copy('XXX.pol.pred', 'cryptosite.pol.pred')
+        shutil.copy('XXX.pol.pred.pdb', 'cryptosite.pol.pred.pdb')
             
         data = open('script.chimerax')
         chimeraSession = data.read()
@@ -269,7 +270,7 @@ open_files("%s", "%s")
         out.write(chimeraSession)
         out.close()
         self.logger.info("Job completed! Results available at: %s" % urlAddress)
-        os.system('zip chimera.zip cryptosite.chimerax')
+        subprocess.check_call(['zip', 'chimera.zip', 'cryptosite.chimerax'])
 
 def get_web_service(config_file):
     db = saliweb.backend.Database(Job)
