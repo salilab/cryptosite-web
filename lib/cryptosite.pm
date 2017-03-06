@@ -148,18 +148,19 @@ sub get_submit_page {
 
 
         ### write pdb input
-        $pdb_input = $jobdir . "/input.pdb";
-        open(INPDB, "> $pdb_input")
-          or throw saliweb::frontend::InternalError("Cannot open $pdb_input: $!");
+        $pdb_input = "input.pdb";
+        my $pdb_fname = $jobdir . "/input.pdb";
+        open(INPDB, "> $pdb_fname")
+          or throw saliweb::frontend::InternalError("Cannot open $pdb_fname $!");
         my $file_contents = "";
         while (<$user_pdb_file>) {
             $file_contents .= $_;
         }
         print INPDB $file_contents;
         close INPDB
-           or throw saliweb::frontend::InternalError("Cannot close $pdb_input: $!");
+           or throw saliweb::frontend::InternalError("Cannot close $pdb_fname $!");
 
-        my $filesize = -s $jobdir . "/input.pdb";
+        my $filesize = -s $pdb_fname;
         if($filesize == 0) {
            throw saliweb::frontend::InputValidationError("You have uploaded an empty file.");
                            }
