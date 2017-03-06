@@ -231,7 +231,9 @@ date
 
         ### - gather the AM data
         self.logger.info("Gathering AllosMod results")
-        subprocess.check_call("module load cryptosite && cryptosite gather /scrapp/AM/%s" % rfil)
+        subprocess.check_call("module load cryptosite && "
+                              "cryptosite gather /scrapp/AM/%s" % rfil,
+                              shell=True)
 
         ### - run SVM
         ## TO DELETE
