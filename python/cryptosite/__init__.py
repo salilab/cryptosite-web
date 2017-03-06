@@ -156,12 +156,9 @@ date
 
                 ### - setup the SGE script #1
                 script = """
-module load sali-libraries
-export PYTHONPATH="/netapp/sali/peterc/lib64/python"
-
-python PREDICTER.py %s
-
-date""" % ('XXX','XXX','XXX')
+module load cryptosite
+cryptosite predict XXX
+date"""
 
                 r = self.runnercls(script)
                 r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=2G')
