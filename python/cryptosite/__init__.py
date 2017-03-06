@@ -61,7 +61,7 @@ class Job(saliweb.backend.Job):
 
     def run_pre_allosmod(self):
         rfil = self._get_random()
-        os.system('zip -r %s.zip XXX' % rfil)
+        subprocess.check_call(['zip', '-r', '%s.zip' % rfil, 'XXX'])
         ### - submit to AllosMod
         r = saliweb.backend.SaliWebServiceRunner(
                          'http://modbase.compbio.ucsf.edu/allosmod/job',
