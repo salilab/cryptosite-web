@@ -9,6 +9,12 @@ class Job(saliweb.backend.Job):
 
     runnercls = saliweb.backend.SGERunner
 
+    def preprocess(self):
+        # Clean up from any previous runs (e.g. a failed run being resubmitted)
+        for f in ("state.out", "random.out"):
+            if os.path.exists(f):
+                os.unlink(f)
+
     def run(self):
 
         if 'stage.out' in os.listdir('.'): 
