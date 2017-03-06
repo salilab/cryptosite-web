@@ -36,15 +36,26 @@ class Job(saliweb.backend.Job):
         # Clean up from any previous runs (e.g. a failed run being resubmitted)
         Stage.write(None)
 
+    def _set_random(self):
+        """Determine and return a random file name"""
+        rint = randint(100,999)
+        rfil = ''.join([choice(string.letters)
+                       for nl in range(3)]) + '%3i' % rint
+        with open('random.out', 'w') as outran:
+            outran.write(rfil)
+        return rfil
+
+    def _get_random(self):
+        """Return the previously-determined random file name"""
+        with open('random.out') as outran:
+            return outran.read().strip()
+
     def run(self):
 
         stage = Stage.read()
         if stage:
             ### - set random number
-            outran= open('random.out')
-            rfil = outran.read().strip()
-            outran.close()
-
+            rfil = self._get_random()
 
             if stage=="pre-AllosMod": 
                 
@@ -179,11 +190,7 @@ date"""
                 pdb_file, chainid = [i.strip() for i in params_file.readlines()]
 
             ### - set random number
-            rint = randint(100,999)
-            rfil = ''.join([choice(string.letters) for nl in range(3)])+'%3i' % (rint,)
-            outran= open('random.out','w')
-            outran.write(rfil)
-            outran.close()
+            rfil = self._set_random()
 
             ### - setup the SGE script #1
             script = """
@@ -218,10 +225,7 @@ date
         ### reschedule run
         stage = Stage.read()
 
-        outran= open('random.out')
-        rfil = outran.read().strip()
-        outran.close()
-
+        rfil = self._get_random()
 
         if stage=="pre-AllosMod": self.reschedule_run()
         elif stage=="AllosMod": self.reschedule_run() 

@@ -22,6 +22,14 @@ class JobTests(saliweb.test.TestCase):
         cryptosite.Stage.write(None)
         self.assertFalse(os.path.exists('stage.out'))
 
+    def test_random(self):
+        """Test determination of random file names"""
+        j = self.make_test_job(cryptosite.Job, 'RUNNING')
+        d = saliweb.test.RunInDir(j.directory)
+        rfil = j._set_random()
+        self.assertTrue(os.path.exists('random.out'))
+        self.assertEqual(j._get_random(), rfil)
+
     def test_preprocess(self):
         """Test preprocess"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')
