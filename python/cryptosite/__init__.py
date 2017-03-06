@@ -4,6 +4,29 @@ from random import randint,choice
 import string, re
 import subprocess
 
+class Stage(object):
+    """Keep track of where we are in a multi-stage job.
+       The current stage of the job is stored in a file in the job directory."""
+
+    filename = 'stage.out'
+
+    @classmethod
+    def read(cls):
+        """Get the current job stage. Can be a string or None."""
+        if os.path.exists(cls.filename):
+            with open(cls.filename) as data:
+                return data.readline().strip()
+
+    @classmethod
+    def write(cls, val):
+        """Set the current job stage. Can be a string or None."""
+        if val is None:
+            if os.path.exists(cls.filename):
+                os.unlink(cls.filename)
+        else:
+            with open(cls.filename, 'w') as out:
+                out.write(val)
+
 
 class Job(saliweb.backend.Job):
 
@@ -11,18 +34,12 @@ class Job(saliweb.backend.Job):
 
     def preprocess(self):
         # Clean up from any previous runs (e.g. a failed run being resubmitted)
-        for f in ("stage.out", "random.out"):
-            if os.path.exists(f):
-                os.unlink(f)
+        Stage.write(None)
 
     def run(self):
 
-        if 'stage.out' in os.listdir('.'): 
-            data = open('stage.out')
-            D = data.readlines()
-            data.close()
-            stage = D[0].strip()
-
+        stage = Stage.read()
+        if stage:
             ### - set random number
             outran= open('random.out')
             rfil = outran.read().strip()
@@ -35,9 +52,7 @@ class Job(saliweb.backend.Job):
                 ### - submit to AllosMod
                 r = saliweb.backend.SaliWebServiceRunner('http://modbase.compbio.ucsf.edu/allosmod/job',
                                  ['name=%s' % rfil, 'jobemail=peterc@salilab.org', 'zip=@%s.zip' % rfil])
-                out = open('stage.out','w')
-                out.write('AllosMod')
-                out.close()
+                Stage.write('AllosMod')
                 return r
 
             elif stage=='AllosMod':
@@ -130,9 +145,7 @@ date
 		r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=6G -t 1-25')
                 self.logger.info("Calculated pockets for AllosMod results")
 
-                out = open('stage.out','w')
-                out.write('AllosMod-bmi')
-                out.close()
+                Stage.write('AllosMod-bmi')
 
                 return r
 
@@ -155,9 +168,7 @@ date""" % ('XXX','XXX','XXX')
 
                 self.logger.info("Prediction DONE!")
 
-                out = open('stage.out','w')
-                out.write('DONE')
-                out.close()
+                Stage.write('DONE')
 
                 return r
 
@@ -208,10 +219,7 @@ date
 
     def postprocess(self, results=None):
         ### reschedule run
-        data = open('stage.out')
-        D = data.readlines()
-        data.close()
-        stage = D[0].strip()
+        stage = Stage.read()
 
         outran= open('random.out')
         rfil = outran.read().strip()
@@ -228,9 +236,7 @@ date
 
             ### - run SVM
             ## TO DELETE
-            data = open('stage.out','w')
-            data.write('AllosMod-bmi')
-            data.close()
+            Stage.write('AllosMod-bmi')
             ##
             self.reschedule_run()
         elif stage=="DONE":

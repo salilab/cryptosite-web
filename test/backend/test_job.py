@@ -7,6 +7,21 @@ import os
 class JobTests(saliweb.test.TestCase):
     """Check custom CryptoSite Job class"""
 
+    def test_stage(self):
+        """Test Stage class"""
+        t = saliweb.test.RunInTempDir()
+        self.assertEqual(cryptosite.Stage.read(), None)
+        cryptosite.Stage.write('foo')
+        self.assertEqual(cryptosite.Stage.read(), 'foo')
+        os.unlink('stage.out')
+        self.assertEqual(cryptosite.Stage.read(), None)
+        cryptosite.Stage.write('foo')
+        cryptosite.Stage.write(None)
+        self.assertEqual(cryptosite.Stage.read(), None)
+        self.assertFalse(os.path.exists('stage.out'))
+        cryptosite.Stage.write(None)
+        self.assertFalse(os.path.exists('stage.out'))
+
     def test_preprocess(self):
         """Test preprocess"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')
