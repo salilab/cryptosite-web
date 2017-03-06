@@ -139,8 +139,7 @@ cp $DRIN/* $DRT/
 
 echo "AM ANALYSIS"
 pwd
-echo "./pred_dECALCrAS1000" > list
-bash /netapp/sali/peterc/cryptosite/src_multichain/analysis/allosmod_analysis.sh
+cryptosite analysis ./pred_dECALCrAS1000
 
 cp $DRT/*.dat /scrapp/AM/$TT/$DROUT
 
