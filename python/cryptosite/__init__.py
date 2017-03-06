@@ -51,27 +51,28 @@ class Job(saliweb.backend.Job):
             return outran.read().strip()
 
     def run(self):
+        # Determine which stage we're at
+        stages = {None: self.run_first,
+                  'pre-AllosMod': self.run_pre_allosmod,
+                  'AllosMod': self.run_allosmod,
+                  'AllosMod-bmi': self.run_allosmod_bmi}
+        return stages[Stage.read()]()
 
-        stage = Stage.read()
-        if stage:
-            ### - set random number
-            rfil = self._get_random()
+    def run_pre_allosmod(self):
+        rfil = self._get_random()
+        os.system('zip -r %s.zip XXX' % rfil)
+        ### - submit to AllosMod
+        r = saliweb.backend.SaliWebServiceRunner('http://modbase.compbio.ucsf.edu/allosmod/job',
+                         ['name=%s' % rfil, 'jobemail=peterc@salilab.org', 'zip=@%s.zip' % rfil])
+        Stage.write('AllosMod')
+        return r
 
-            if stage=="pre-AllosMod": 
-                
-                os.system('zip -r %s.zip XXX' % rfil)
-                ### - submit to AllosMod
-                r = saliweb.backend.SaliWebServiceRunner('http://modbase.compbio.ucsf.edu/allosmod/job',
-                                 ['name=%s' % rfil, 'jobemail=peterc@salilab.org', 'zip=@%s.zip' % rfil])
-                Stage.write('AllosMod')
-                return r
+    def run_allosmod(self):
+        rfil = self._get_random()
+        self.logger.info("Post-processing AllosMod results -bmi")
 
-            elif stage=='AllosMod':
-                
-                self.logger.info("Post-processing AllosMod results -bmi")
-                
-                ### - setup the SGE script #1
-                script = """
+        ### - setup the SGE script #1
+        script = """
 export TMPDIR=/scratch
 export MYTMP=`mktemp -d`
 cd $MYTMP
@@ -151,49 +152,46 @@ ls -l
 rm -rf $MYTMP
 date
 """ % (rfil,)
-            
-                r = self.runnercls(script)
-		r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=6G -t 1-25')
-                self.logger.info("Calculated pockets for AllosMod results")
 
-                Stage.write('AllosMod-bmi')
+        r = self.runnercls(script)
+        r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=6G -t 1-25')
+        self.logger.info("Calculated pockets for AllosMod results")
 
-                return r
+        Stage.write('AllosMod-bmi')
+        return r
 
 
-            elif stage=='AllosMod-bmi':
+    def run_allosmod_bmi(self):
+        self.logger.info("Applying SVM model")
 
-                self.logger.info("Applying SVM model")
-
-                ### - setup the SGE script #1
-                script = """
+        ### - setup the SGE script #1
+        script = """
 module load cryptosite
 cryptosite predict XXX
 date"""
 
-                r = self.runnercls(script)
-                r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=2G')
+        r = self.runnercls(script)
+        r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=2G')
 
-                self.logger.info("Prediction DONE!")
+        self.logger.info("Prediction DONE!")
 
-                Stage.write('DONE')
+        Stage.write('DONE')
 
-                return r
+        return r
 
+    def run_first(self):
+        ### - set logging file
+        self.logger.setLevel(logging.INFO)
+        self.logger.info("Beginning preprocess() for job %s " %self.name)
 
-        else: 
-            ### - set logging file
-            self.logger.setLevel(logging.INFO)
-            self.logger.info("Beginning preprocess() for job %s " %self.name)
+        with open('param.txt') as params_file:
+            pdb_file, chainid = [i.strip() for i in params_file.readlines()]
 
-            with open('param.txt') as params_file:
-                pdb_file, chainid = [i.strip() for i in params_file.readlines()]
+        ### - set random number
+        rfil = self._set_random()
 
-            ### - set random number
-            rfil = self._set_random()
-
-            ### - setup the SGE script #1
-            script = """
+        ### - setup the SGE script #1
+        script = """
 ls -lt
 
 pwd
@@ -213,70 +211,65 @@ date
 
 """ % (pdb_file, chainid)
         
-            r = self.runnercls(script)
-            r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
+        r = self.runnercls(script)
+        r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
 
-	    self.logger.info("Calculated bioinformatics features for job: %s" % rfil)
-            self.logger.info("\n\nSubmitting to AllosMod")
-
-            return r
+        self.logger.info("Calculated bioinformatics features for job: %s" % rfil)
+        self.logger.info("\n\nSubmitting to AllosMod")
+        return r
 
     def postprocess(self, results=None):
-        ### reschedule run
-        stage = Stage.read()
+        stages = {'pre-AllosMod': self.reschedule_run,
+                  'AllosMod': self.reschedule_run,
+                  'AllosMod-bmi': self.postprocess_allosmod_bmi,
+                  'DONE': self.postprocess_final}
+        return stages[Stage.read()]()
 
+    def postprocess_allosmod_bmi(self):
+        """Gather results from processing AllosMod output"""
         rfil = self._get_random()
 
-        if stage=="pre-AllosMod": self.reschedule_run()
-        elif stage=="AllosMod": self.reschedule_run() 
-        elif stage=="AllosMod-bmi":
+        ### - gather the AM data
+        self.logger.info("Gathering AllosMod results")
+        subprocess.check_call("module load cryptosite && cryptosite gather /scrapp/AM/%s" % rfil)
 
-            ### - gather the AM data
-            self.logger.info("Gathering AllosMod results")
-            subprocess.check_call("module load cryptosite && cryptosite gather /scrapp/AM/%s" % rfil)
+        ### - run SVM
+        ## TO DELETE
+        Stage.write('AllosMod-bmi')
+        ##
+        self.reschedule_run()
 
-            ### - run SVM
-            ## TO DELETE
-            Stage.write('AllosMod-bmi')
-            ##
-            self.reschedule_run()
-        elif stage=="DONE":
-            ### - make chimera session file
-            self.logger.info("Completing the job: writing a Chimera session file.")
-            os.system('cp XXX.pol.pred cryptosite.pol.pred')
-            os.system('cp XXX.pol.pred.pdb cryptosite.pol.pred.pdb')
+    def postprocess_final(self):
+        ### - make chimera session file
+        self.logger.info("Completing the job: writing a Chimera session file.")
+        os.system('cp XXX.pol.pred cryptosite.pol.pred')
+        os.system('cp XXX.pol.pred.pdb cryptosite.pol.pred.pdb')
             
-            data = open('script.chimerax')
-            chimeraSession = data.read()
-            data.close()
+        data = open('script.chimerax')
+        chimeraSession = data.read()
+        data.close()
 
-            (filepath, jobdir) = os.path.split(self.url)
-            pdb_temp = "/cryptosite.pol.pred.pdb?"
-            pdb_url = re.sub('\?', pdb_temp, jobdir)
-            pdburl = filepath + "/" + pdb_url
-            urlAddress = self.url
+        (filepath, jobdir) = os.path.split(self.url)
+        pdb_temp = "/cryptosite.pol.pred.pdb?"
+        pdb_url = re.sub('\?', pdb_temp, jobdir)
+        pdburl = filepath + "/" + pdb_url
+        urlAddress = self.url
 
-            ftr_temp = "/cryptosite.pol.pred?"
-            ftr_url = re.sub('\?', ftr_temp, jobdir)
-            ftrurl = filepath + "/" + ftr_url
+        ftr_temp = "/cryptosite.pol.pred?"
+        ftr_url = re.sub('\?', ftr_temp, jobdir)
+        ftrurl = filepath + "/" + ftr_url
 
-            chimeraSession += """
+        chimeraSession += """
 open_files("%s", "%s")
 ]]>
 </py_cmd>
 </ChimeraPuppet>""" % (pdburl,ftrurl)
 
-            out = open('cryptosite.chimerax', 'w')
-            out.write(chimeraSession)
-            out.close()
-            self.logger.info("Job completed! Results available at: %s" % urlAddress)
-
-            os.system('zip chimera.zip cryptosite.chimerax')
-
-        else: 
-            self.logger.info("\n\nEXITING: no stage output!")
-            pass
-
+        out = open('cryptosite.chimerax', 'w')
+        out.write(chimeraSession)
+        out.close()
+        self.logger.info("Job completed! Results available at: %s" % urlAddress)
+        os.system('zip chimera.zip cryptosite.chimerax')
 
 def get_web_service(config_file):
     db = saliweb.backend.Database(Job)
