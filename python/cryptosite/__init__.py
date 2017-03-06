@@ -63,8 +63,11 @@ class Job(saliweb.backend.Job):
         rfil = self._get_random()
         os.system('zip -r %s.zip XXX' % rfil)
         ### - submit to AllosMod
-        r = saliweb.backend.SaliWebServiceRunner('http://modbase.compbio.ucsf.edu/allosmod/job',
-                         ['name=%s' % rfil, 'jobemail=peterc@salilab.org', 'zip=@%s.zip' % rfil])
+        r = saliweb.backend.SaliWebServiceRunner(
+                         'http://modbase.compbio.ucsf.edu/allosmod/job',
+                         ['name=%s' % rfil,
+                          'jobemail=cryptosite@salilab.org',
+                          'zip=@%s.zip' % rfil])
         Stage.write('AllosMod')
         return r
 
