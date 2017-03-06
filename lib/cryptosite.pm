@@ -69,7 +69,7 @@ sub get_index_page {
    <b>Caveat Emptor!</b> CryptoSite is freely available in the hope that it will be useful, but you must use
    it at your own risk. We make no guarantees about data confidentiality on this public service website.
    If you need to work with confidential data, you can
-   <a href="$download">run CryptoSite on your own machine.</a>.
+   <a href="$download">run CryptoSite on your own machine</a>.
 <br />&nbsp;</p>
 GREETING
 
