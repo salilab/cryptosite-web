@@ -106,7 +106,7 @@ echo $PDB
 
 
 module load cryptosite
-cp $DRIN/pm.pdb.B*.pdb $DRIN/$PDB_mdl.pdb .
+cp $DRIN/pm.pdb.B*.pdb .
 
 wc *.pdb
 
