@@ -70,7 +70,7 @@ class Job(saliweb.backend.Job):
         subprocess.check_call(['zip', '-r', '%s.zip' % rfil, 'XXX'])
         ### - submit to AllosMod
         r = saliweb.backend.SaliWebServiceRunner(
-                         'http://modbase.compbio.ucsf.edu/allosmod/job',
+                         'https://modbase.compbio.ucsf.edu/allosmod/job',
                          ['name=%s' % rfil,
                           'jobemail=cryptosite@salilab.org',
                           'zip=@%s.zip' % rfil])
