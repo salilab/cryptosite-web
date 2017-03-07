@@ -220,7 +220,7 @@ date
         r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
 
         self.logger.info("Calculated bioinformatics features for job: %s" % rfil)
-        self.logger.info("\n\nSubmitting to AllosMod")
+        self.logger.info("Submitting to AllosMod")
         return r
 
     def postprocess(self, results=None):
