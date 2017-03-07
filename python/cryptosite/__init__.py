@@ -71,9 +71,7 @@ class Job(saliweb.backend.Job):
         ### - submit to AllosMod
         r = saliweb.backend.SaliWebServiceRunner(
                          'https://modbase.compbio.ucsf.edu/allosmod/job',
-                         ['name=%s' % rfil,
-                          'jobemail=cryptosite@salilab.org',
-                          'zip=@%s.zip' % rfil])
+                         ['name=%s' % rfil, 'zip=@%s.zip' % rfil])
         Stage.write('AllosMod')
         return r
 
