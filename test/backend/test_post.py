@@ -14,6 +14,21 @@ class MockCheckCall(object):
 class Tests(saliweb.test.TestCase):
     """Test postprocessing methods"""
 
+    def test_postprocess_first_ok(self):
+        """Test postprocess_first(), OK completion"""
+        j = self.make_test_job(cryptosite.Job, 'POSTPROCESSING')
+        with open(os.path.join(j.directory, 'setup.log'), 'w') as fh:
+            fh.write('test')
+        j._run_in_job_directory(j.postprocess_first)
+
+    def test_postprocess_first_error(self):
+        """Test postprocess_first(), with errors"""
+        j = self.make_test_job(cryptosite.Job, 'RUNNING')
+        with open(os.path.join(j.directory, 'setup.log'), 'w') as fh:
+            fh.write('The following chains were not found in the input '
+                     'PDB file: A, B')
+        j._run_in_job_directory(j.postprocess_first)
+
     def test_postprocess_final(self):
         """Test postprocess_final()"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')

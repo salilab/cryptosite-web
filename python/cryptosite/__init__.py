@@ -203,7 +203,7 @@ echo "working on"
 
 module load cryptosite
 
-cryptosite setup --short %s %s
+cryptosite setup --short %s %s >& setup.log
 
 # Put AllosMod outputs on /scrapp
 echo "SCRAPP=True" >> XXX/input.dat
@@ -222,11 +222,21 @@ date
         return r
 
     def postprocess(self, results=None):
-        stages = {'pre-AllosMod': self.reschedule_run,
+        stages = {'pre-AllosMod': self.postprocess_first,
                   'AllosMod': self.reschedule_run,
                   'AllosMod-bmi': self.postprocess_allosmod_bmi,
                   'DONE': self.postprocess_final}
         return stages[Stage.read()]()
+
+    def postprocess_first(self):
+        """Check errors from initial setup"""
+        with open('setup.log') as fh:
+            contents = fh.read()
+        # Return on user errors (job will complete)
+        if 'chains were not found' in contents:
+            return
+        # No errors -> continue to next stage
+        self.reschedule_run()
 
     def postprocess_allosmod_bmi(self):
         """Gather results from processing AllosMod output"""

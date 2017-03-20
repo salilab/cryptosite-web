@@ -228,8 +228,12 @@ sub get_results_page {
     my $q = $self->cgi;
     if (-f "cryptosite.pol.pred.pdb"){
         return $self->display_ok_job($q, $job);
-    } else{
-        return $self->display_failed_job($q, $job);
+    } else {
+        open(FH, "stage.out")
+          or throw saliweb::frontend::InternalError("Cannot open stage: $!");
+        my $stage = <FH>;
+        close(FH);
+        return $self->display_failed_job($q, $job, $stage);
     }
 }
 
@@ -252,19 +256,26 @@ sub display_ok_job {
 }
 
 sub display_failed_job {
-    my ($self, $q, $job) = @_;
+    my ($self, $q, $job, $stage) = @_;
     my $return= $q->p("Your CryptoSite job '<b>" . $job->name .
                       "</b>' failed to produce any prediction.");
-    $return.=$q->p("This is usually caused by incorrect input files ");
+    $return.=$q->p("This is usually caused by incorrect inputs.");
 
     $return.=$q->p("For a discussion of some common input errors, please see " .
                    "the " .
                    $q->a({-href=>$self->help_url . "#errors"}, "help page") .
                    ".");
-    $return.= $q->p("For more information, you can " .
+    if ($stage eq "pre-AllosMod") {
+        $return.= $q->p("For more information, you can " .
+                    "<a href=\"" . $job->get_results_file_url("setup.log") .
+                    "\">download the CryptoSite setup log file</a>.");
+    } else {
+        $return.= $q->p("For more information, you can " .
                     "<a href=\"" . $job->get_results_file_url("framework.log") .
-                    "\">download the CryptoSite file-check log file</a>." .
-                    "<BR>If the problem is not clear from this log, " .
+                    "\">download the CryptoSite file-check log file</a>.");
+    }
+
+    $return.= $q->p("If the problem is not clear from this log, " .
                     "please <a href=\"" .
                     $self->contact_url . "\">contact us</a> for " .
                     "further assistance.");
