@@ -232,6 +232,7 @@ sub get_results_page {
         open(FH, "stage.out")
           or throw saliweb::frontend::InternalError("Cannot open stage: $!");
         my $stage = <FH>;
+        chomp $stage;
         close(FH);
         return $self->display_failed_job($q, $job, $stage);
     }
