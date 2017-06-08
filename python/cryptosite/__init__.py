@@ -233,7 +233,8 @@ date
         with open('setup.log') as fh:
             contents = fh.read()
         # Return on user errors (job will complete)
-        if 'chains were not found' in contents:
+        if 'chains were not found' in contents \
+           or 'file contains the following invalid residue types' in contents:
             return
         # No errors -> continue to next stage
         self.reschedule_run()
