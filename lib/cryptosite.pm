@@ -139,7 +139,7 @@ sub get_submit_page {
     my $pdb_input = "";
 
     if(length $user_pdbid > 0) {
-        $pdb_input = get_pdb_chains($self, $user_pdbid, $jobdir);
+        $pdb_input = my_get_pdb_chains($self, $user_pdbid, $jobdir);
                                }
     else {
         my $user_pdb_file = $q->upload('input_pdb');   
@@ -290,7 +290,7 @@ sub display_failed_job {
 
 
 
-sub get_pdb_chains {
+sub my_get_pdb_chains {
   my $self = shift;
   my $pdb_code = shift;
   my $jobdir = shift;
