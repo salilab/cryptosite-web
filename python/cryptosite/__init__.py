@@ -32,7 +32,7 @@ class Stage(object):
 
 class Job(saliweb.backend.Job):
 
-    runnercls = saliweb.backend.SGERunner
+    runnercls = saliweb.backend.WyntonSGERunner
 
     def preprocess(self):
         # Clean up from any previous runs (e.g. a failed run being resubmitted)
@@ -103,6 +103,7 @@ echo $DRT
 echo $PDB
 
 
+module load Sali
 module load cryptosite
 cp $DRIN/pm.pdb.B*.pdb .
 
@@ -157,7 +158,7 @@ date
 """ % (rfil,)
 
         r = self.runnercls(script)
-        r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=6G -t 1-25')
+        r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=6G -t 1-25')
         self.logger.info("Calculated pockets for AllosMod results")
 
         Stage.write('AllosMod-bmi')
@@ -169,12 +170,13 @@ date
 
         ### - setup the SGE script #1
         script = """
+module load Sali
 module load cryptosite
 cryptosite predict XXX
 date"""
 
         r = self.runnercls(script)
-        r.set_sge_options('-l arch=linux-x64 -l scratch=2G -l mem_free=2G')
+        r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=2G')
 
         self.logger.info("Prediction DONE!")
 
@@ -201,6 +203,7 @@ pwd
 
 echo "working on"
 
+module load Sali
 module load cryptosite
 
 cryptosite setup --short %s %s >& setup.log
@@ -215,7 +218,7 @@ date
 """ % (pdb_file, chainid)
 
         r = self.runnercls(script)
-        r.set_sge_options('-l arch=linux-x64 -l diva1=1G -l scratch=2G -l mem_free=2G')
+        r.set_sge_options('-l arch=lx-amd64 -l diva1=1G -l scratch=2G -l mem_free=2G')
 
         self.logger.info("Calculated bioinformatics features for job: %s" % rfil)
         self.logger.info("Submitting to AllosMod")
@@ -246,6 +249,7 @@ date
         ### - gather the AM data
         self.logger.info("Gathering AllosMod results")
         subprocess.check_call(". /etc/profile && "
+                              "module load Sali && "
                               "module load cryptosite && "
                               "cryptosite gather /scrapp/AM/%s "
                               ">& gather.out" % rfil,
@@ -274,6 +278,7 @@ date
         ftrurl = filepath + "/" + ftr_url
 
         subprocess.check_call(". /etc/profile && "
+                              "module load Sali && "
                               "module load cryptosite && "
                               "cryptosite chimera %s %s cryptosite.chimerax"
                               % (pdburl, ftrurl), shell=True)
