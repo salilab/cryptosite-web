@@ -218,7 +218,7 @@ date
 """ % (pdb_file, chainid)
 
         r = self.runnercls(script)
-        r.set_sge_options('-l arch=lx-amd64 -l diva1=1G -l scratch=2G -l mem_free=2G')
+        r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=2G')
 
         self.logger.info("Calculated bioinformatics features for job: %s" % rfil)
         self.logger.info("Submitting to AllosMod")
