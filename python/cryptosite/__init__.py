@@ -86,7 +86,7 @@ export MYTMP=`mktemp -d`
 cd $MYTMP
 
 TT=%s
-ARRAY=(/scrapp/$TT/pred_dECALCrAS1000/*)
+ARRAY=(/wynton/scratch/$TT/pred_dECALCrAS1000/*)
 DRIN=${ARRAY[$SGE_TASK_ID - 1]}
 DIN=`echo ${DRIN} | cut -d '/' -f 5`
 DROUT=`echo ${DRIN} | cut -d '/' -f 4,5`
@@ -120,9 +120,9 @@ sleep 20
 cryptosite pockets
 
 
-mkdir -p /scrapp/AM/$TT/$DROUT
+mkdir -p /wynton/scratch/AM/$TT/$DROUT
 
-cp pockets.out /scrapp/AM/$TT/$DROUT
+cp pockets.out /wynton/scratch/AM/$TT/$DROUT
 
 sleep 20
 
@@ -132,7 +132,7 @@ sleep 20
 cryptosite am_bmi
 
 
-cp am_features.out /scrapp/AM/$TT/$DROUT
+cp am_features.out /wynton/scratch/AM/$TT/$DROUT
 
 
 ## - copy energy.dat
@@ -146,7 +146,7 @@ echo "AM ANALYSIS"
 pwd
 cryptosite analysis ./pred_dECALCrAS1000
 
-cp $DRT/*.dat /scrapp/AM/$TT/$DROUT
+cp $DRT/*.dat /wynton/scratch/AM/$TT/$DROUT
 
 cat check_runs.out
 
@@ -208,7 +208,7 @@ module load cryptosite
 
 cryptosite setup --short %s %s >& setup.log
 
-# Put AllosMod outputs on /scrapp
+# Put AllosMod outputs on /wynton/scratch
 echo "SCRAPP=True" >> XXX/input.dat
 
 echo "pre-AllosMod" > stage.out
@@ -251,7 +251,7 @@ date
         subprocess.check_call(". /etc/profile && "
                               "module load Sali && "
                               "module load cryptosite && "
-                              "cryptosite gather /scrapp/AM/%s "
+                              "cryptosite gather /wynton/scratch/AM/%s "
                               ">& gather.out" % rfil,
                               shell=True)
 
