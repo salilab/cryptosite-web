@@ -88,8 +88,8 @@ cd $MYTMP
 TT=%s
 ARRAY=(/wynton/scratch/$TT/pred_dECALCrAS1000/*)
 DRIN=${ARRAY[$SGE_TASK_ID - 1]}
-DIN=`echo ${DRIN} | cut -d '/' -f 5`
-DROUT=`echo ${DRIN} | cut -d '/' -f 4,5`
+DIN=`echo ${DRIN} | cut -d '/' -f 6`
+DROUT=`echo ${DRIN} | cut -d '/' -f 5,6`
 DRT="./$DROUT"
 mkdir -p $DRT
 PDB=`echo $DIN | cut -d \. -f 1`
