@@ -8,7 +8,7 @@ env.InstallAdminTools()
 env.InstallCGIScripts()
 
 Export('env')
-SConscript('python/cryptosite/SConscript')
+SConscript('backend/cryptosite/SConscript')
 SConscript('lib/SConscript')
 SConscript('txt/SConscript')
 SConscript('test/SConscript')
