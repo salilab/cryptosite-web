@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}Cryptic binding site Help{% endblock %}
+
+{% block body %}
+<h1>CryptoSite Help Page</h1>
+
+<a name="input"><h4>Input Fields</h4></a>
+<ul>
+  <li><a id="email"><h5>Email</h5></a>
+      <p>If provided, a notification will be sent to this address once the job is completed.
+      </p></li>
+  <li><a id="input_pdb"><h5>Coordinate file</h5></a>
+      <p>Provide PDB ID or upload input structure in PDB format. Missing residues (eg, flexible loops)
+         in the structure are NOT tolerated. For the best performance, please fill in the missing residues (for example, with Modeller). Please remove/edit non-natural amino acids, as they may crash your job.
+      </p></li>
+  <li><a id="chain"><h5>Chain ID</h5></a>
+      <p>Required. CryptoSite can now use multiple chains as an input - please enter IDs of all the chains that you want to 
+         analyze, separated by commas (for example, A,B,C).
+      </p></li>
+</ul>
+
+<a name="output"><h4>Output Files</h4></a>
+<ul>
+  <li><b>cryptosite.pol.pred.pdb</b>: Output PDB file with CryptoSite scores in the B-factor column.
+	                             We recommend using a score threshold of 10 (a residue with a larger score is
+                                     more likely to be part of a cryptic site).</li>
+  <li><b>cryptosite.pol.pred</b>: Output file in simple text format listing residues, residue IDs, chain IDs, and the CryptoSite score (last column; the number in PDB file divided by 100).</li>
+  <li><b>cryptosite.chimerax</b>: UCSF Chimera session file that is preset to visualize your protein, with residues colored
+                                  based on the CryptoSite score. A pop-up window will also appear when launching Chimera,
+                                  showing feature values for all the selected residues.</li>
+</ul>
+ 
+
+
+
+{% endblock %}

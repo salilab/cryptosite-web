@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}Cryptic binding site{% endblock %}
+
+{% block body %}
+<h2 align="center">CryptoSite: Predicting Cryptic Binding Sites</h2>
+
+<form method="post" action="{{ url_for("job") }}" enctype="multipart/form-data" name="mist_form">
+
+  <table>
+    <tr>
+      <td colspan="3">
+        <p>CryptoSite is a computational tool for predicting the location of
+        cryptic binding sites in proteins and protein complexes. Please read
+        our <a href="http://www.sciencedirect.com/science/article/pii/S0022283616000851"> <b>paper</b></a>
+        for more info.</p>
+
+        <p>The use of CryptoSite is limited to a PDB file per user per day.
+        If you require more access, you can <a href="{{ url_for("download") }}">download the source code</a>
+        and run the algorithm on your own compute cluster.</p>
+
+        <p><b>Caveat Emptor!</b> CryptoSite is freely available in the hope
+        that it will be useful, but you must use it at your own risk. We make
+        no guarantees about data confidentiality on this public service website.
+        If you need to work with confidential data, you can
+        <a href="{{ url_for("download") }}">run CryptoSite on your own machine</a>.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>Email address (optional) {{ help_link("email") }}</td>
+      <td><input type="text" name="email" value="{{ g.user.email }}" size="25" /></td>
+    </tr>
+    <tr>
+      <td><h3>PDB ID</h3> {{ help_link("input_pdb") }}</td>
+      <td><input type="text" name="input_pdbid"  size="8" maxlength="8" placeholder="eg. 2f6v" /><h3>or</h3> upload file: <input type="file" name="input_pdb"  size="10" /></td>
+    </tr>
+    <tr>
+      <td>Chain ID {{ help_link("chain") }}</td>
+      <td><input type="text" name="chain"  size="8" placeholder="eg. A or A,B" /></td>
+    </tr>
+    <tr>
+      <td>Name your job</td>
+      <td><input type="text" name="name"  size="8" placeholder="2f6vA" /></td>
+    </tr>
+    <tr>
+      <td colspan="2"><center><input type="submit" value="Process" /><input type="reset" value="Reset" /></center><p>&nbsp;</p></td>
+    </tr>
+  </table>
+</form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}Cryptic binding site Results{% endblock %}
+
+{% block body %}
+<p>Job '<b>{{ job.name }}"</b>' has completed.</p>
+
+<p>Download <a href="{{ job.get_results_file_url("cryptosite.pol.pred") }}">CryptoSite feature output.</a></p>
+
+<p>Download <a href="{{ job.get_results_file_url("cryptosite.pol.pred.pdb") }}">CryptoSite PDB output.</a></p>
+
+<p>Download <a href="{{ job.get_results_file_url("chimera.zip") }}">UCSF Chimera session file.</a></p>
+
+{{ job.get_results_available_time() }}
+{% endblock %}

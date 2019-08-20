@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Cryptic binding site Job Submission{% endblock %}
+
+{% block body %}
+<h1>Job Submitted</h1>
+
+<hr />
+
+<p>Your job has been submitted to the server!
+Your job ID is {{ job.name }}.</p>
+
+<p>Results will be found at <a href="{{ job.results_url }}">this link</a>.</p>
+
+{%- if job.email %}
+<p>You will be notified at {{ email }} when job results are available.<p>
+{%- endif %}
+
+<p>You can check on your job at the <a href="{{ url_for("job") }}">CryptoSite queue status page</a>.</p>
+
+<p>The estimated execution time is ~1-2 days, depending on the load.</p>
+
+<p>If you experience a problem or you do not receive the results
+for more than 5 days, please <a href="{{ url_for("contact") }}">contact us</a>.
+</p>
+
+<p>Thank you for using our server and good luck in your research!</p>
+
+<p>Peter Cimermancic</p>
+
+{% endblock %}
