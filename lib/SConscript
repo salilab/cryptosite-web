@@ -1,3 +1,0 @@
-Import('env')
-
-env.InstallPerl(['cryptosite.pm'])
