@@ -4,7 +4,12 @@ from saliweb.frontend import get_completed_job, Parameter, FileParameter
 import os
 from . import submit_page
 
-parameters=[]
+parameters = [Parameter("name", "Job name", optional=True),
+              FileParameter("input_pdb", "PDB file to analyze", optional=True),
+              Parameter("input_pdbid", "PDB ID (e.g. 1abc) to analyze",
+                        optional=True),
+              Parameter("chain",
+                        "PDB chain(s) to analyze (e.g. 'A' or 'A,B')")]
 app = saliweb.frontend.make_application(__name__, parameters)
 
 
