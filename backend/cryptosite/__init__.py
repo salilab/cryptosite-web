@@ -46,7 +46,7 @@ class Job(saliweb.backend.Job):
     def _set_random(self):
         """Determine and return a random file name"""
         rint = randint(100,999)
-        rfil = ''.join([choice(string.letters)
+        rfil = ''.join([choice(string.ascii_letters)
                        for nl in range(3)]) + '%3i' % rint
         with open('random.out', 'w') as outran:
             outran.write(rfil)

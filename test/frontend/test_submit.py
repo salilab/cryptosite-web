@@ -1,6 +1,7 @@
 import unittest
 import saliweb.test
 import os
+import sys
 import re
 import gzip
 
@@ -12,7 +13,8 @@ cryptosite = saliweb.test.import_mocked_frontend("cryptosite", __file__,
 
 def make_test_pdb(tmpdir):
     os.mkdir(os.path.join(tmpdir,  'xy'))
-    fh = gzip.open(os.path.join(tmpdir, 'xy', 'pdb1xyz.ent.gz'), 'wb')
+    fh = gzip.open(os.path.join(tmpdir, 'xy', 'pdb1xyz.ent.gz'),
+                   'wb' if sys.version_info[0] == 2 else 'wt')
     fh.write("REMARK  6  TEST REMARK\n")
     fh.close()
 
@@ -29,7 +31,7 @@ class Tests(saliweb.test.TestCase):
         # No PDB uploaded
         rv = c.post('/job', data={'chain': 'A'})
         self.assertEqual(rv.status_code, 400)
-        self.assertIn('No coordinate file has been submitted!', rv.data)
+        self.assertIn(b'No coordinate file has been submitted!', rv.data)
 
         t = saliweb.test.TempDir()
 
@@ -37,25 +39,27 @@ class Tests(saliweb.test.TestCase):
         pdbf = os.path.join(t.tmpdir, 'test.pdb')
         with open(pdbf, 'w') as fh:
             pass
-        rv = c.post('/job', data={'chain': 'A', 'input_pdb': open(pdbf)})
+        rv = c.post('/job', data={'chain': 'A', 'input_pdb': open(pdbf, 'rb')})
         self.assertEqual(rv.status_code, 400)
-        self.assertIn('You have uploaded an empty file.', rv.data)
+        self.assertIn(b'You have uploaded an empty file.', rv.data)
 
         # Successful submission (no email)
         with open(pdbf, 'w') as fh:
             fh.write("REMARK\n"
                      "ATOM      2  CA  ALA     1      26.711  14.576   5.091\n")
-        rv = c.post('/job', data={'chain': 'A', 'input_pdb': open(pdbf)})
+        rv = c.post('/job', data={'chain': 'A', 'input_pdb': open(pdbf, 'rb')})
         self.assertEqual(rv.status_code, 200)
-        r = re.compile('Your job has been submitted.*You can check on your job',
+        r = re.compile(b'Your job has been submitted.*'
+                       b'You can check on your job',
                        re.MULTILINE | re.DOTALL)
         self.assertRegexpMatches(rv.data, r)
 
         # Successful submission (with email)
         rv = c.post('/job', data={'chain': 'A', 'email': 'test@example.com',
-                                  'input_pdb': open(pdbf)})
+                                  'input_pdb': open(pdbf, 'rb')})
         self.assertEqual(rv.status_code, 200)
-        r = re.compile('Your job has been submitted.*You can check on your job',
+        r = re.compile(b'Your job has been submitted.*'
+                       b'You can check on your job',
                        re.MULTILINE | re.DOTALL)
         self.assertRegexpMatches(rv.data, r)
 
@@ -72,7 +76,8 @@ class Tests(saliweb.test.TestCase):
         c = cryptosite.app.test_client()
         rv = c.post('/job', data={'chain': 'A', 'input_pdbid': '1xyz'})
         self.assertEqual(rv.status_code, 200)
-        r = re.compile('Your job has been submitted.*You can check on your job',
+        r = re.compile(b'Your job has been submitted.*'
+                       b'You can check on your job',
                        re.MULTILINE | re.DOTALL)
         self.assertRegexpMatches(rv.data, r)
 
