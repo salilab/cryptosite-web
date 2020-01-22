@@ -249,7 +249,6 @@ date
         ### - gather the AM data
         self.logger.info("Gathering AllosMod results")
         subprocess.check_call(". /etc/profile && "
-                              "module load Sali && "
                               "module load cryptosite && "
                               "cryptosite gather /wynton/scratch/AM/%s "
                               ">& gather.out" % rfil,
@@ -278,7 +277,6 @@ date
         ftrurl = filepath + "/" + ftr_url
 
         subprocess.check_call(". /etc/profile && "
-                              "module load Sali && "
                               "module load cryptosite && "
                               "cryptosite chimera %s %s cryptosite.chimerax"
                               % (pdburl, ftrurl), shell=True)
