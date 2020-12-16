@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/salilab/cryptosite-web.svg?branch=master)](https://travis-ci.org/salilab/cryptosite-web)
+[![Build Status](https://github.com/salilab/cryptosite-web/workflows/build/badge.svg?branch=master)](https://github.com/salilab/cryptosite-web/actions?query=workflow%3Abuild)
 [![codecov](https://codecov.io/gh/salilab/cryptosite-web/branch/master/graph/badge.svg)](https://codecov.io/gh/salilab/cryptosite-web)
 [![Code Climate](https://codeclimate.com/github/salilab/cryptosite-web/badges/gpa.svg)](https://codeclimate.com/github/salilab/cryptosite-web)
 
