@@ -1,5 +1,5 @@
-[![Build Status](https://github.com/salilab/cryptosite-web/workflows/build/badge.svg?branch=master)](https://github.com/salilab/cryptosite-web/actions?query=workflow%3Abuild)
-[![codecov](https://codecov.io/gh/salilab/cryptosite-web/branch/master/graph/badge.svg)](https://codecov.io/gh/salilab/cryptosite-web)
+[![Build Status](https://github.com/salilab/cryptosite-web/workflows/build/badge.svg?branch=main)](https://github.com/salilab/cryptosite-web/actions?query=workflow%3Abuild)
+[![codecov](https://codecov.io/gh/salilab/cryptosite-web/branch/main/graph/badge.svg)](https://codecov.io/gh/salilab/cryptosite-web)
 [![Code Climate](https://codeclimate.com/github/salilab/cryptosite-web/badges/gpa.svg)](https://codeclimate.com/github/salilab/cryptosite-web)
 
 This is the source code for [CryptoSite](https://salilab.org/cryptosite/), a web
