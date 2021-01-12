@@ -10,28 +10,26 @@ class JobTests(saliweb.test.TestCase):
 
     def test_stage(self):
         """Test Stage class"""
-        t = saliweb.test.RunInTempDir()
-        self.assertEqual(cryptosite.Stage.read(), None)
-        cryptosite.Stage.write('foo')
-        self.assertEqual(cryptosite.Stage.read(), 'foo')
-        os.unlink('stage.out')
-        self.assertEqual(cryptosite.Stage.read(), None)
-        cryptosite.Stage.write('foo')
-        cryptosite.Stage.write(None)
-        self.assertEqual(cryptosite.Stage.read(), None)
-        self.assertFalse(os.path.exists('stage.out'))
-        cryptosite.Stage.write(None)
-        self.assertFalse(os.path.exists('stage.out'))
-        del t
+        with saliweb.test.temporary_working_directory():
+            self.assertEqual(cryptosite.Stage.read(), None)
+            cryptosite.Stage.write('foo')
+            self.assertEqual(cryptosite.Stage.read(), 'foo')
+            os.unlink('stage.out')
+            self.assertEqual(cryptosite.Stage.read(), None)
+            cryptosite.Stage.write('foo')
+            cryptosite.Stage.write(None)
+            self.assertEqual(cryptosite.Stage.read(), None)
+            self.assertFalse(os.path.exists('stage.out'))
+            cryptosite.Stage.write(None)
+            self.assertFalse(os.path.exists('stage.out'))
 
     def test_random(self):
         """Test determination of random file names"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')
-        d = saliweb.test.RunInDir(j.directory)
-        rfil = j._set_random()
-        self.assertTrue(os.path.exists('random.out'))
-        self.assertEqual(j._get_random(), rfil)
-        del d
+        with saliweb.test.working_directory(j.directory):
+            rfil = j._set_random()
+            self.assertTrue(os.path.exists('random.out'))
+            self.assertEqual(j._get_random(), rfil)
 
     def test_preprocess(self):
         """Test preprocess"""

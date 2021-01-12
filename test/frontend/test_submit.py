@@ -24,63 +24,69 @@ class Tests(saliweb.test.TestCase):
 
     def test_submit_page_uploaded(self):
         """Test submit page with uploaded PDB"""
-        incoming = saliweb.test.TempDir()
-        cryptosite.app.config['DIRECTORIES_INCOMING'] = incoming.tmpdir
-        c = cryptosite.app.test_client()
+        with saliweb.test.temporary_directory() as tmpdir:
+            incoming = os.path.join(tmpdir, 'incoming')
+            os.mkdir(incoming)
+            cryptosite.app.config['DIRECTORIES_INCOMING'] = incoming
+            c = cryptosite.app.test_client()
 
-        # No PDB uploaded
-        rv = c.post('/job', data={'chain': 'A'})
-        self.assertEqual(rv.status_code, 400)
-        self.assertIn(b'No coordinate file has been submitted!', rv.data)
+            # No PDB uploaded
+            rv = c.post('/job', data={'chain': 'A'})
+            self.assertEqual(rv.status_code, 400)
+            self.assertIn(b'No coordinate file has been submitted!', rv.data)
 
-        t = saliweb.test.TempDir()
+            # Empty uploaded PDB
+            pdbf = os.path.join(tmpdir, 'test.pdb')
+            with open(pdbf, 'w') as fh:
+                pass
+            rv = c.post('/job',
+                        data={'chain': 'A', 'input_pdb': open(pdbf, 'rb')})
+            self.assertEqual(rv.status_code, 400)
+            self.assertIn(b'You have uploaded an empty file.', rv.data)
 
-        # Empty uploaded PDB
-        pdbf = os.path.join(t.tmpdir, 'test.pdb')
-        with open(pdbf, 'w') as fh:
-            pass
-        rv = c.post('/job', data={'chain': 'A', 'input_pdb': open(pdbf, 'rb')})
-        self.assertEqual(rv.status_code, 400)
-        self.assertIn(b'You have uploaded an empty file.', rv.data)
+            # Successful submission (no email)
+            with open(pdbf, 'w') as fh:
+                fh.write(
+                    "REMARK\n"
+                    "ATOM      2  CA  ALA     1      26.711  14.576   5.091\n")
+            rv = c.post('/job',
+                        data={'chain': 'A', 'input_pdb': open(pdbf, 'rb')})
+            self.assertEqual(rv.status_code, 200)
+            r = re.compile(b'Your job has been submitted.*'
+                           b'You can check on your job',
+                           re.MULTILINE | re.DOTALL)
+            self.assertRegex(rv.data, r)
 
-        # Successful submission (no email)
-        with open(pdbf, 'w') as fh:
-            fh.write(
-                "REMARK\n"
-                "ATOM      2  CA  ALA     1      26.711  14.576   5.091\n")
-        rv = c.post('/job', data={'chain': 'A', 'input_pdb': open(pdbf, 'rb')})
-        self.assertEqual(rv.status_code, 200)
-        r = re.compile(b'Your job has been submitted.*'
-                       b'You can check on your job',
-                       re.MULTILINE | re.DOTALL)
-        self.assertRegex(rv.data, r)
-
-        # Successful submission (with email)
-        rv = c.post('/job', data={'chain': 'A', 'email': 'test@example.com',
-                                  'input_pdb': open(pdbf, 'rb')})
-        self.assertEqual(rv.status_code, 200)
-        r = re.compile(b'Your job has been submitted.*'
-                       b'You can check on your job',
-                       re.MULTILINE | re.DOTALL)
-        self.assertRegex(rv.data, r)
+            # Successful submission (with email)
+            rv = c.post('/job',
+                        data={'chain': 'A', 'email': 'test@example.com',
+                              'input_pdb': open(pdbf, 'rb')})
+            self.assertEqual(rv.status_code, 200)
+            r = re.compile(b'Your job has been submitted.*'
+                           b'You can check on your job',
+                           re.MULTILINE | re.DOTALL)
+            self.assertRegex(rv.data, r)
 
     def test_submit_page_id(self):
         """Test submit page with PDB ID"""
-        incoming = saliweb.test.TempDir()
-        cryptosite.app.config['DIRECTORIES_INCOMING'] = incoming.tmpdir
+        with saliweb.test.temporary_directory() as tmpdir:
+            incoming = os.path.join(tmpdir, 'incoming')
+            os.mkdir(incoming)
+            cryptosite.app.config['DIRECTORIES_INCOMING'] = incoming
 
-        # Make mock PDB database
-        pdb_root = saliweb.test.TempDir()
-        make_test_pdb(pdb_root.tmpdir)
-        cryptosite.app.config['PDB_ROOT'] = pdb_root.tmpdir
+            # Make mock PDB database
+            pdb_root = os.path.join(tmpdir, 'pdb')
+            os.mkdir(pdb_root)
+            make_test_pdb(pdb_root)
+            cryptosite.app.config['PDB_ROOT'] = pdb_root
 
-        c = cryptosite.app.test_client()
-        rv = c.post('/job', data={'chain': 'A', 'input_pdbid': '1xyz'})
-        self.assertEqual(rv.status_code, 200)
-        r = re.compile(b'Your job has been submitted.*'
-                       b'You can check on your job',
-                       re.MULTILINE | re.DOTALL)
-        self.assertRegex(rv.data, r)
+            c = cryptosite.app.test_client()
+            rv = c.post('/job', data={'chain': 'A', 'input_pdbid': '1xyz'})
+            self.assertEqual(rv.status_code, 200)
+            r = re.compile(b'Your job has been submitted.*'
+                           b'You can check on your job',
+                           re.MULTILINE | re.DOTALL)
+            self.assertRegex(rv.data, r)
 
     def test_check_chain(self):
         """Test check_chain()"""
