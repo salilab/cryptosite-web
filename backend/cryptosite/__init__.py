@@ -1,14 +1,18 @@
 import saliweb.backend
-import logging, os
+import logging
+import os
 import glob
 import shutil
-from random import randint,choice
-import string, re
+from random import randint, choice
+import string
+import re
 import subprocess
+
 
 class Stage(object):
     """Keep track of where we are in a multi-stage job.
-       The current stage of the job is stored in a file in the job directory."""
+       The current stage of the job is stored in a file in the
+       job directory."""
 
     filename = 'stage.out'
 
@@ -45,7 +49,7 @@ class Job(saliweb.backend.Job):
 
     def _set_random(self):
         """Determine and return a random file name"""
-        rint = randint(100,999)
+        rint = randint(100, 999)
         rfil = ''.join([choice(string.ascii_letters)
                        for nl in range(3)]) + '%3i' % rint
         with open('random.out', 'w') as outran:
@@ -68,7 +72,7 @@ class Job(saliweb.backend.Job):
     def run_pre_allosmod(self):
         rfil = self._get_random()
         subprocess.check_call(['zip', '-r', '%s.zip' % rfil, 'XXX'])
-        ### - submit to AllosMod
+        # - submit to AllosMod
         r = saliweb.backend.SaliWebServiceRunner(
                          'https://modbase.compbio.ucsf.edu/allosmod/job',
                          ['name=%s' % rfil, 'zip=@%s.zip' % rfil])
@@ -79,7 +83,7 @@ class Job(saliweb.backend.Job):
         rfil = self._get_random()
         self.logger.info("Post-processing AllosMod results -bmi")
 
-        ### - setup the SGE script #1
+        # - setup the SGE script #1
         script = """
 export TMPDIR=/scratch
 export MYTMP=`mktemp -d`
@@ -92,7 +96,7 @@ DIN=`echo ${DRIN} | cut -d '/' -f 6`
 DROUT=`echo ${DRIN} | cut -d '/' -f 5,6`
 DRT="./$DROUT"
 mkdir -p $DRT
-PDB=`echo $DIN | cut -d \. -f 1`
+PDB=`echo $DIN | cut -d \\. -f 1`
 
 
 
@@ -158,17 +162,17 @@ date
 """ % (rfil,)
 
         r = self.runnercls(script)
-        r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=6G -t 1-25')
+        r.set_sge_options(
+            '-l arch=lx-amd64 -l scratch=2G -l mem_free=6G -t 1-25')
         self.logger.info("Calculated pockets for AllosMod results")
 
         Stage.write('AllosMod-bmi')
         return r
 
-
     def run_allosmod_bmi(self):
         self.logger.info("Applying SVM model")
 
-        ### - setup the SGE script #1
+        # - setup the SGE script #1
         script = """
 module load Sali
 module load cryptosite
@@ -185,17 +189,17 @@ date"""
         return r
 
     def run_first(self):
-        ### - set logging file
+        # - set logging file
         self.logger.setLevel(logging.INFO)
-        self.logger.info("Beginning preprocess() for job %s " %self.name)
+        self.logger.info("Beginning preprocess() for job %s " % self.name)
 
         with open('param.txt') as params_file:
             pdb_file, chainid = [i.strip() for i in params_file.readlines()]
 
-        ### - set random number
+        # - set random number
         rfil = self._set_random()
 
-        ### - setup the SGE script #1
+        # - setup the SGE script #1
         script = """
 ls -lt
 
@@ -220,7 +224,8 @@ date
         r = self.runnercls(script)
         r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=2G')
 
-        self.logger.info("Calculated bioinformatics features for job: %s" % rfil)
+        self.logger.info("Calculated bioinformatics features for job: %s"
+                         % rfil)
         self.logger.info("Submitting to AllosMod")
         return r
 
@@ -246,7 +251,7 @@ date
         """Gather results from processing AllosMod output"""
         rfil = self._get_random()
 
-        ### - gather the AM data
+        # - gather the AM data
         self.logger.info("Gathering AllosMod results")
         subprocess.check_call(". /etc/profile && "
                               "module load cryptosite && "
@@ -254,26 +259,26 @@ date
                               ">& gather.out" % rfil,
                               shell=True)
 
-        ### - run SVM
-        ## TO DELETE
+        # - run SVM
+        # TO DELETE
         Stage.write('AllosMod-bmi')
-        ##
+        #
         self.reschedule_run()
 
     def postprocess_final(self):
-        ### - make chimera session file
+        # - make chimera session file
         self.logger.info("Completing the job: writing a Chimera session file.")
         shutil.copy('XXX.pol.pred', 'cryptosite.pol.pred')
         shutil.copy('XXX.pol.pred.pdb', 'cryptosite.pol.pred.pdb')
 
         (filepath, jobdir) = os.path.split(self.url)
         pdb_temp = "/cryptosite.pol.pred.pdb?"
-        pdb_url = re.sub('\?', pdb_temp, jobdir)
+        pdb_url = re.sub(r'\?', pdb_temp, jobdir)
         pdburl = filepath + "/" + pdb_url
         urlAddress = self.url
 
         ftr_temp = "/cryptosite.pol.pred?"
-        ftr_url = re.sub('\?', ftr_temp, jobdir)
+        ftr_url = re.sub(r'\?', ftr_temp, jobdir)
         ftrurl = filepath + "/" + ftr_url
 
         subprocess.check_call(". /etc/profile && "
@@ -281,8 +286,10 @@ date
                               "cryptosite chimera %s %s cryptosite.chimerax"
                               % (pdburl, ftrurl), shell=True)
 
-        self.logger.info("Job completed! Results available at: %s" % urlAddress)
+        self.logger.info("Job completed! Results available at: %s"
+                         % urlAddress)
         subprocess.check_call(['zip', 'chimera.zip', 'cryptosite.chimerax'])
+
 
 def get_web_service(config_file):
     db = saliweb.backend.Database(Job)

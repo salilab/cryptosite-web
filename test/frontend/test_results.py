@@ -24,7 +24,7 @@ class Tests(saliweb.test.TestCase):
             c = cryptosite.app.test_client()
             for endpoint in ('job', 'results.cgi'):
                 rv = c.get('/%s/testjob2?passwd=%s' % (endpoint, j.passwd))
-                r = re.compile(b'Job.*testjob2.*has completed.*chimera\.zip.*'
+                r = re.compile(rb'Job.*testjob2.*has completed.*chimera\.zip.*'
                                b'UCSF Chimera session file',
                                re.MULTILINE | re.DOTALL)
                 self.assertRegexpMatches(rv.data, r)
@@ -39,8 +39,8 @@ class Tests(saliweb.test.TestCase):
                 b'Your CryptoSite job.*testjob3.*failed to produce any '
                 b'prediction.*'
                 b'please see the.*#errors.*help page.*For more information, '
-                b'you can.*framework\.log.*download the CryptoSite file\-check '
-                b'log file.*contact us', re.MULTILINE | re.DOTALL)
+                rb'you can.*framework\.log.*download the CryptoSite '
+                rb'file\-check log file.*contact us', re.MULTILINE | re.DOTALL)
             self.assertRegexpMatches(rv.data, r)
 
     def test_failed_job_setup(self):
@@ -53,7 +53,7 @@ class Tests(saliweb.test.TestCase):
                 b'Your CryptoSite job.*testjob.*failed to produce any '
                 b'prediction.*'
                 b'please see the.*#errors.*help page.*For more information, '
-                b'you can.*setup\.log.*download the CryptoSite setup '
+                rb'you can.*setup\.log.*download the CryptoSite setup '
                 b'log file.*contact us', re.MULTILINE | re.DOTALL)
             self.assertRegexpMatches(rv.data, r)
 

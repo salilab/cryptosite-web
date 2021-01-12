@@ -1,6 +1,5 @@
 from flask import request
 import saliweb.frontend
-from werkzeug.utils import secure_filename
 import os
 import re
 

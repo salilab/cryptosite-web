@@ -4,6 +4,7 @@ import saliweb.test
 import saliweb.backend
 import os
 
+
 class JobTests(saliweb.test.TestCase):
     """Check custom CryptoSite Job class"""
 
@@ -21,6 +22,7 @@ class JobTests(saliweb.test.TestCase):
         self.assertFalse(os.path.exists('stage.out'))
         cryptosite.Stage.write(None)
         self.assertFalse(os.path.exists('stage.out'))
+        del t
 
     def test_random(self):
         """Test determination of random file names"""
@@ -29,11 +31,13 @@ class JobTests(saliweb.test.TestCase):
         rfil = j._set_random()
         self.assertTrue(os.path.exists('random.out'))
         self.assertEqual(j._get_random(), rfil)
+        del d
 
     def test_preprocess(self):
         """Test preprocess"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')
-        for fname in ('stage.out', 'other.out', 'XXX_mdl.pdb', 'sge-script.sh'):
+        for fname in ('stage.out', 'other.out', 'XXX_mdl.pdb',
+                      'sge-script.sh'):
             with open(os.path.join(j.directory, fname), 'w') as fh:
                 fh.write("dummy")
         os.mkdir(os.path.join(j.directory, 'XXX'))
@@ -63,6 +67,7 @@ class JobTests(saliweb.test.TestCase):
         cls = j._run_in_job_directory(j.run_allosmod_bmi)
         self.assert_(isinstance(cls, saliweb.backend.SGERunner),
                      "SGERunner not returned")
+
 
 if __name__ == '__main__':
     unittest.main()

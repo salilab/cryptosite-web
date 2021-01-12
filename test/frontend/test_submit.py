@@ -45,8 +45,9 @@ class Tests(saliweb.test.TestCase):
 
         # Successful submission (no email)
         with open(pdbf, 'w') as fh:
-            fh.write("REMARK\n"
-                     "ATOM      2  CA  ALA     1      26.711  14.576   5.091\n")
+            fh.write(
+                "REMARK\n"
+                "ATOM      2  CA  ALA     1      26.711  14.576   5.091\n")
         rv = c.post('/job', data={'chain': 'A', 'input_pdb': open(pdbf, 'rb')})
         self.assertEqual(rv.status_code, 200)
         r = re.compile(b'Your job has been submitted.*'

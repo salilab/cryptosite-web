@@ -5,11 +5,14 @@ import saliweb.backend
 import os
 import subprocess
 
+
 class MockCheckCall(object):
     def __init__(self):
         self.calls = []
+
     def __call__(self, cmd, **keys):
         self.calls.append(cmd)
+
 
 class Tests(saliweb.test.TestCase):
     """Test postprocessing methods"""
@@ -54,6 +57,7 @@ class Tests(saliweb.test.TestCase):
                          ["zip", "chimera.zip", "cryptosite.chimerax"])
         for fname in ('cryptosite.pol.pred', 'cryptosite.pol.pred.pdb'):
             os.unlink(os.path.join(j.directory, fname))
+
 
 if __name__ == '__main__':
     unittest.main()
