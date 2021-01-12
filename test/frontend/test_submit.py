@@ -53,7 +53,7 @@ class Tests(saliweb.test.TestCase):
         r = re.compile(b'Your job has been submitted.*'
                        b'You can check on your job',
                        re.MULTILINE | re.DOTALL)
-        self.assertRegexpMatches(rv.data, r)
+        self.assertRegex(rv.data, r)
 
         # Successful submission (with email)
         rv = c.post('/job', data={'chain': 'A', 'email': 'test@example.com',
@@ -62,7 +62,7 @@ class Tests(saliweb.test.TestCase):
         r = re.compile(b'Your job has been submitted.*'
                        b'You can check on your job',
                        re.MULTILINE | re.DOTALL)
-        self.assertRegexpMatches(rv.data, r)
+        self.assertRegex(rv.data, r)
 
     def test_submit_page_id(self):
         """Test submit page with PDB ID"""
@@ -80,7 +80,7 @@ class Tests(saliweb.test.TestCase):
         r = re.compile(b'Your job has been submitted.*'
                        b'You can check on your job',
                        re.MULTILINE | re.DOTALL)
-        self.assertRegexpMatches(rv.data, r)
+        self.assertRegex(rv.data, r)
 
     def test_check_chain(self):
         """Test check_chain()"""

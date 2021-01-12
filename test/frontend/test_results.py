@@ -27,7 +27,7 @@ class Tests(saliweb.test.TestCase):
                 r = re.compile(rb'Job.*testjob2.*has completed.*chimera\.zip.*'
                                b'UCSF Chimera session file',
                                re.MULTILINE | re.DOTALL)
-                self.assertRegexpMatches(rv.data, r)
+                self.assertRegex(rv.data, r)
 
     def test_failed_job_done(self):
         """Test display of job failed at DONE stage"""
@@ -41,7 +41,7 @@ class Tests(saliweb.test.TestCase):
                 b'please see the.*#errors.*help page.*For more information, '
                 rb'you can.*framework\.log.*download the CryptoSite '
                 rb'file\-check log file.*contact us', re.MULTILINE | re.DOTALL)
-            self.assertRegexpMatches(rv.data, r)
+            self.assertRegex(rv.data, r)
 
     def test_failed_job_setup(self):
         """Test display of job failed at setup stage"""
@@ -55,7 +55,7 @@ class Tests(saliweb.test.TestCase):
                 b'please see the.*#errors.*help page.*For more information, '
                 rb'you can.*setup\.log.*download the CryptoSite setup '
                 b'log file.*contact us', re.MULTILINE | re.DOTALL)
-            self.assertRegexpMatches(rv.data, r)
+            self.assertRegex(rv.data, r)
 
 
 if __name__ == '__main__':
