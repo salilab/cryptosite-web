@@ -3,6 +3,7 @@ import saliweb.test
 import os
 import sys
 import re
+import tempfile
 import gzip
 
 
@@ -24,7 +25,7 @@ class Tests(saliweb.test.TestCase):
 
     def test_submit_page_uploaded(self):
         """Test submit page with uploaded PDB"""
-        with saliweb.test.temporary_directory() as tmpdir:
+        with tempfile.TemporaryDirectory() as tmpdir:
             incoming = os.path.join(tmpdir, 'incoming')
             os.mkdir(incoming)
             cryptosite.app.config['DIRECTORIES_INCOMING'] = incoming
@@ -69,7 +70,7 @@ class Tests(saliweb.test.TestCase):
 
     def test_submit_page_id(self):
         """Test submit page with PDB ID"""
-        with saliweb.test.temporary_directory() as tmpdir:
+        with tempfile.TemporaryDirectory() as tmpdir:
             incoming = os.path.join(tmpdir, 'incoming')
             os.mkdir(incoming)
             cryptosite.app.config['DIRECTORIES_INCOMING'] = incoming
