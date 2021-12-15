@@ -61,6 +61,9 @@ class JobTests(saliweb.test.TestCase):
     def test_run_allosmod_bmi(self):
         """Test run of final prediction"""
         j = self.make_test_job(cryptosite.Job, 'RUNNING')
+        fname = os.path.join(j.directory, 'random.out')
+        with open(fname, 'w') as fh:
+            fh.write('42\n')
         cls = j._run_in_job_directory(j.run_allosmod_bmi)
         self.assertIsInstance(cls, saliweb.backend.SGERunner)
 

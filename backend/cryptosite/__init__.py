@@ -170,14 +170,19 @@ date
         return r
 
     def run_allosmod_bmi(self):
-        self.logger.info("Applying SVM model")
+        self.logger.info("Gathering AllosMod results & applying SVM model")
 
         # - setup the SGE script #1
+        rfil = self._get_random()
         script = """
 module load Sali
 module load cryptosite
+
+# - gather the AM data
+cryptosite gather /wynton/scratch/AM/%s >& gather.out || exit 1
+
 cryptosite predict XXX
-date"""
+date""" % rfil
 
         r = self.runnercls(script)
         r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=2G')
@@ -232,7 +237,7 @@ date
     def postprocess(self, results=None):
         stages = {'pre-AllosMod': self.postprocess_first,
                   'AllosMod': self.reschedule_run,
-                  'AllosMod-bmi': self.postprocess_allosmod_bmi,
+                  'AllosMod-bmi': self.reschedule_run,
                   'DONE': self.postprocess_final}
         return stages[Stage.read()]()
 
@@ -245,24 +250,6 @@ date
            or 'file contains the following invalid residue types' in contents:
             return
         # No errors -> continue to next stage
-        self.reschedule_run()
-
-    def postprocess_allosmod_bmi(self):
-        """Gather results from processing AllosMod output"""
-        rfil = self._get_random()
-
-        # - gather the AM data
-        self.logger.info("Gathering AllosMod results")
-        subprocess.check_call(". /etc/profile && "
-                              "module load cryptosite && "
-                              "cryptosite gather /wynton/scratch/AM/%s "
-                              ">& gather.out" % rfil,
-                              shell=True)
-
-        # - run SVM
-        # TO DELETE
-        Stage.write('AllosMod-bmi')
-        #
         self.reschedule_run()
 
     def postprocess_final(self):
