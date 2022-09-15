@@ -163,7 +163,8 @@ date
 
         r = self.runnercls(script)
         r.set_sge_options(
-            '-l arch=lx-amd64 -l scratch=2G -l mem_free=6G -t 1-25')
+            '-l arch=lx-amd64 -l scratch=2G -l mem_free=6G -t 1-25 '
+            '-l h_rt=96:00:00')
         self.logger.info("Calculated pockets for AllosMod results")
 
         Stage.write('AllosMod-bmi')
@@ -185,7 +186,8 @@ cryptosite predict XXX
 date""" % rfil
 
         r = self.runnercls(script)
-        r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=2G')
+        r.set_sge_options(
+            '-l arch=lx-amd64 -l scratch=2G -l mem_free=2G -l h_rt=96:00:00')
 
         self.logger.info("Prediction DONE!")
 
@@ -227,7 +229,8 @@ date
 """ % (pdb_file, chainid)
 
         r = self.runnercls(script)
-        r.set_sge_options('-l arch=lx-amd64 -l scratch=2G -l mem_free=2G')
+        r.set_sge_options(
+            '-l arch=lx-amd64 -l scratch=2G -l mem_free=2G -l h_rt=96:00:00')
 
         self.logger.info("Calculated bioinformatics features for job: %s"
                          % rfil)
