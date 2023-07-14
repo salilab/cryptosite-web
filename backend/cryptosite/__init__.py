@@ -165,6 +165,7 @@ date
         r.set_sge_options(
             '-l arch=lx-amd64 -l scratch=2G -l mem_free=6G -t 1-25 '
             '-l h_rt=96:00:00')
+        r.set_sge_name(self.name)
         self.logger.info("Calculated pockets for AllosMod results")
 
         Stage.write('AllosMod-bmi')
@@ -188,6 +189,7 @@ date""" % rfil
         r = self.runnercls(script)
         r.set_sge_options(
             '-l arch=lx-amd64 -l scratch=2G -l mem_free=2G -l h_rt=96:00:00')
+        r.set_sge_name(self.name)
 
         self.logger.info("Prediction DONE!")
 
@@ -231,6 +233,7 @@ date
         r = self.runnercls(script)
         r.set_sge_options(
             '-l arch=lx-amd64 -l scratch=2G -l mem_free=2G -l h_rt=96:00:00')
+        r.set_sge_name(self.name)
 
         self.logger.info("Calculated bioinformatics features for job: %s"
                          % rfil)
