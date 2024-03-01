@@ -1,7 +1,6 @@
 import unittest
 import saliweb.test
 import os
-import sys
 from pathlib import Path
 import re
 import tempfile
