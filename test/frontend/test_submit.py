@@ -2,6 +2,7 @@ import unittest
 import saliweb.test
 import os
 import sys
+from pathlib import Path
 import re
 import tempfile
 import gzip
@@ -13,11 +14,9 @@ cryptosite = saliweb.test.import_mocked_frontend("cryptosite", __file__,
 
 
 def make_test_pdb(tmpdir):
-    os.mkdir(os.path.join(tmpdir,  'xy'))
-    fh = gzip.open(os.path.join(tmpdir, 'xy', 'pdb1xyz.ent.gz'),
-                   'wb' if sys.version_info[0] == 2 else 'wt')
-    fh.write("REMARK  6  TEST REMARK\n")
-    fh.close()
+    (tmpdir / 'xy').mkdir()
+    with gzip.open(tmpdir / 'xy' / 'pdb1xyz.ent.gz', 'wt') as fh:
+        fh.write("REMARK  6  TEST REMARK\n")
 
 
 class Tests(saliweb.test.TestCase):
@@ -76,10 +75,10 @@ class Tests(saliweb.test.TestCase):
             cryptosite.app.config['DIRECTORIES_INCOMING'] = incoming
 
             # Make mock PDB database
-            pdb_root = os.path.join(tmpdir, 'pdb')
-            os.mkdir(pdb_root)
+            pdb_root = Path(tmpdir) / 'pdb'
+            pdb_root.mkdir()
             make_test_pdb(pdb_root)
-            cryptosite.app.config['PDB_ROOT'] = pdb_root
+            cryptosite.app.config['PDB_ROOT'] = str(pdb_root)
 
             c = cryptosite.app.test_client()
             rv = c.post('/job', data={'chain': 'A', 'input_pdbid': '1xyz'})
